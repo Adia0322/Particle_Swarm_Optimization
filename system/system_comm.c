@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "image_comm.h"
-#include "DIC_comm.h"
+#include "cost_function/DIC_comm.h"
 
 double random_digit(void)
 {

@@ -16,11 +16,13 @@ OUTPUT_PSO           =      PSO.dll
 ###         Source           ###
 ################################
 SRCS_PSO             =      $(wildcard core/*.c) \
+							$(wildcard core/cost_function/*.c) \
                             $(wildcard factory/*.c) \
                             $(wildcard interp/*.c) \
                             $(wildcard system/*.c)
 
-HEADERS_PSO          =      $(wildcard include/*.h)
+HEADERS_PSO          =      $(wildcard include/*.h) \
+							$(wildcard include/cost_function/*.h)
 
 ################################
 ###         Target           ###

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "DIC_comm.h"
+#include "cost_function/DIC_comm.h"
 #include "PSO_comm.h"
 #include "image_comm.h"
 
