@@ -4,11 +4,11 @@
 CC = gcc
 # define params (-Wall: show warnings, -g: add debug info, -I : srearch from root)                       
 # compile params
+ROOT_DIR := $(CURDIR)
 CFLAGS = -Wall -O2 -fPIC \
-	-I. \
-	-Iinclude
+	-I$(ROOT_DIR)/include
 
-LDFLAGS = -lm -shared -Wl,--export-all-symbols      # link params
+LDFLAGS 			 = 		-lm -shared -Wl,--export-all-symbols      # link params
 BUILD_DIR            =      build
 OUTPUT_PSO           =      PSO.dll
 
