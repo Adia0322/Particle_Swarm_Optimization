@@ -11,3 +11,4 @@ image/
 *.xml
 *.lprof
 *.txt
+*.o
