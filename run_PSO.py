@@ -12,8 +12,8 @@ class DICProcessor:
         self._setup_argtypes()
 
     def _setup_argtypes(self):
-        self.lib.process_image.restype = None
-        self.lib.process_image.argtypes = [
+        self.lib.pso_optimize.restype = None
+        self.lib.pso_optimize.argtypes = [
             ctypes.POINTER(ctypes.c_double), # ref_img
             ctypes.POINTER(ctypes.c_double), # cur_img
             ctypes.c_int,                    # width
@@ -42,7 +42,7 @@ class DICProcessor:
         result_buffer = np.zeros(3, dtype=np.double)
         result_buffer_ptr = result_buffer.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
 
-        self.lib.process_image(
+        self.lib.pso_optimize(
             img_ref_f_ptr, 
             img_cur_f_ptr, 
             w, 

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "image_comm.h"
-#include "DIC_comm.h"
+#include "cost_function/DIC_comm.h"
 
 #define PSO_FAILURE         -1
 #define PSO_SUCCESS         0
@@ -78,7 +78,7 @@ struct PSO_algorithm_ops {
 };
 
 // declare implementation
-void run_PSO(struct SYS_INFO *info);
+void run_pso(struct SYS_INFO *info);
 void PSO_create_factory(PSO_COST_TYPE type, struct SYS_INFO *info);
 int PSO_destroy(struct PSO_context *pso_ctx);
 int execute_pso_algorithm(struct PSO_context *ctx);

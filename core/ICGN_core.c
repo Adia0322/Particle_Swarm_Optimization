@@ -9,7 +9,7 @@
 extern int interp_safe_margin();
 extern double bilinear(double *data, int width, int height, double x, double y);
 
-void run_PSO(struct SYS_INFO *info) {
+void run_pso(struct SYS_INFO *info) {
 	// create PSO_context and put DIC info in it
 	PSO_create_factory(PSO_TYPE_ZNCC, info);
 

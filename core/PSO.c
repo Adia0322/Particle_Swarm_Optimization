@@ -1,8 +1,7 @@
-// run PSO & DIC
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "DIC_comm.h"
+#include "cost_function/DIC_comm.h"
 #include "PSO_comm.h"
 #include "system_comm.h"
 
@@ -11,7 +10,7 @@ int main(int argc, char *argv[]) {
 }
 
 __declspec(dllexport)
-void process_image(double *ref_img, double *cur_img, int width, int height,\
+void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
                      int population, int subset_side_len,\
                      double *img_ref_pt, double *img_cur_pt, double *result){
     if (ref_img == NULL || cur_img == NULL) return;
@@ -32,7 +31,7 @@ void process_image(double *ref_img, double *cur_img, int width, int height,\
     info->pso_ctx.algo_ops                  = &standard_pso_algo_ops;
 
     if (info) {
-        run_PSO(info);
+        run_pso(info);
         SYS_DBG("global_best_pos: (x,y) = (%.2f,%.2f)\n", info->pso_ctx.global_best.position[1], info->pso_ctx.global_best.position[0]);
         result[0] = info->pso_ctx.global_best.position[0]; // y
         result[1] = info->pso_ctx.global_best.position[1]; // x
