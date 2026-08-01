@@ -6,8 +6,25 @@
 #include "image_comm.h"
 #include "cost_function/DIC_comm.h"
 
-#define PSO_FAILURE         -1
-#define PSO_SUCCESS         0
+#define PSO_FAILURE                 -1
+#define PSO_SUCCESS                 0
+
+#define default_population          50
+#define pso_cfg_population          default_population
+#define pso_cfg_dimension           2
+#define pso_cfg_max_iter            10
+#define pso_cfg_v_max               4
+#define pso_cfg_v_min               -4
+#define pso_cfg_v_ini               1
+#define pso_cfg_w_max               0.9f
+#define pso_cfg_w_min               0.4f
+#define pso_cfg_c1                  2.0f
+#define pso_cfg_c2                  2.0f
+#define pso_cfg_dec_factor          1.0f
+#define pso_cfg_inc_factor          1.0f
+#define pso_cfg_border_scale        0.8
+
+#define pso_side_len_pt             5
 
 typedef struct PSO_context PSO_context;
 typedef struct SYS_INFO SYS_INFO;

@@ -1,5 +1,5 @@
 #ifndef SYSTEM_H
-#define PSO_ZNCC_H
+#define SYSTEM_H
 
 #include <stdio.h>
 #include <stdlib.h>

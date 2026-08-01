@@ -45,32 +45,32 @@ int execute_pso_algorithm(struct PSO_context *ctx) {
 
 void st_pso_config_init(struct PSO_context *ctx) {
 	struct DIC_ZNCC_context *zncc_ctx = (struct DIC_ZNCC_context *)ctx->priv;
-    // ctx->config.population 			= 		50; // depends on input
-    ctx->config.dimension 				= 		2;
-    ctx->config.max_iter 				= 		10; 
+    // ctx->config.population 				= 		pso_cfg_population; // depends on input
+    ctx->config.dimension 					= 		pso_cfg_dimension;
+    ctx->config.max_iter 					= 		pso_cfg_max_iter; 
 
-    ctx->config.v_max 					= 		4;
-    ctx->config.v_min 					= 		-4;
-	ctx->config.v_ini					=		1;
+    ctx->config.v_max 						= 		pso_cfg_v_max;
+    ctx->config.v_min 						= 		pso_cfg_v_min;
+	ctx->config.v_ini						=		pso_cfg_v_ini;
 
-    ctx->config.w_max 					= 		0.9f;
-    ctx->config.w_min 					= 		0.4f;
+    ctx->config.w_max 						= 		pso_cfg_w_max;
+    ctx->config.w_min 						= 		pso_cfg_w_min;
 
-    ctx->config.c1 						= 		2.0f;
-    ctx->config.c2 						=		2.0f;
+    ctx->config.c1 							= 		pso_cfg_c1;
+    ctx->config.c2 							=		pso_cfg_c2;
 
-    ctx->config.dec_factor 				= 		1.0f;
-    ctx->config.inc_factor 				=		1.0f;
+    ctx->config.dec_factor 					= 		pso_cfg_dec_factor;
+    ctx->config.inc_factor 					=		pso_cfg_inc_factor;
 
-    ctx->config.border_side_len 		= 		(zncc_ctx->ref_subset_info.side_len) * 0.8;
-	ctx->global_best.value				=		-FLT_MAX;
+    ctx->config.border_side_len 			= 		(zncc_ctx->ref_subset_info.side_len) * pso_cfg_border_scale;
+	ctx->global_best.value					=		-FLT_MAX;
 }
 
 void st_pso_layout_init(struct PSO_context *ctx) {
 	// init st_pso_config_init() first
 	struct DIC_ZNCC_context *zncc_ctx = (struct DIC_ZNCC_context *)ctx->priv;
 	if (zncc_ctx == NULL) return;
-    ctx->config.layout.side_len_pt 			= 		5;
+    ctx->config.layout.side_len_pt 			= 		pso_side_len_pt;
     ctx->config.layout.grid_spacing 		= 		(ctx->config.border_side_len - 1) / (ctx->config.layout.side_len_pt - 1);
     ctx->config.layout.fixed_particles 		= 		ctx->config.layout.side_len_pt * ctx->config.layout.side_len_pt;
 	ctx->config.layout.shift_side_len_half 	= 		((ctx->config.layout.side_len_pt-1)/2) * ctx->config.layout.grid_spacing;
