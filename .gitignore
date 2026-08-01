@@ -4,7 +4,6 @@ venv/
 env/
 bak/
 build/
-image/
 
 *.pyc
 *.dll
