@@ -10,8 +10,8 @@ extern int interp_safe_margin();
 extern double bilinear(double *data, int width, int height, double x, double y);
 
 void run_pso(struct sys_info *info) {
-	// create PSO_context and put DIC info in it
-	PSO_create_factory(PSO_TYPE_ZNCC, info);
+	// create pso_context and put DIC info in it
+	pso_create_factory(PSO_TYPE_ZNCC, info);
 
 	if (!info->pso_ctx.priv) return;
 
@@ -164,7 +164,7 @@ int zncc_init(struct sys_info *info) {
 	return 0;
 }
 
-double zncc_cost_function(struct PSO_context *ctx) {
+double zncc_cost_function(struct pso_context *ctx) {
 	// SYS_DBG("zncc_cost_function\n");
 	if (ctx == NULL) return -10.0f; // result range: -1 ~ +1
 	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
@@ -226,7 +226,7 @@ double zncc_cost_function(struct PSO_context *ctx) {
     return numer / sqrt(ref_sum_den * cur_den);
 }
 
-int zncc_cleanup(struct PSO_context *ctx) {
+int zncc_cleanup(struct pso_context *ctx) {
 	SYS_DBG("zncc_cleanup\n");
 	if (ctx == NULL || ctx->priv == NULL) return -1;
 
@@ -265,10 +265,10 @@ int ssd_init(struct sys_info *info) {
 	return 0;
 }
 
-double ssd_cost_function(struct PSO_context *ctx) {
+double ssd_cost_function(struct pso_context *ctx) {
 	return 0;
 }
 
-int ssd_cleanup(struct PSO_context *ctx) {
+int ssd_cleanup(struct pso_context *ctx) {
 	return 0;
 }

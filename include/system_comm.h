@@ -14,7 +14,7 @@
 #define SYS_ERR_EN				  				1
 
 #define SQUARE(x) ((x)*(x))
-#define mean(x,y) ((x)/((y)*(y)))
+#define MEAN(x,y) ((x)/((y)*(y)))
 
 #define IMG_WIDTH_640                           640
 #define IMG_HEIGHT_480                          480 
@@ -41,7 +41,7 @@
 
 typedef enum {
     PSO_DIC,
-} SYS_TASK_TYPE;
+} sys_task_type;
 
 typedef struct sys_args_info {
 	int **args_ptr;
@@ -53,7 +53,7 @@ typedef struct sys_info {
 	int dev_num;
 	int dev_idx;
 	sys_args_info args_info;
-	PSO_context pso_ctx;
+	pso_context pso_ctx;
 	dic_context dic_ctx;
 } sys_info;
 

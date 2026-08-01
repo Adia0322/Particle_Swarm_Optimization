@@ -14,7 +14,7 @@ static inline void clamp_to_bounds(double *value, double max, double min) {
 	else if (*value < min) *value = min;
 }
 
-int execute_pso_algorithm(struct PSO_context *ctx) {
+int execute_pso_algorithm(struct pso_context *ctx) {
 	// 1. check
 	if (!ctx || !ctx->algo_ops || !ctx->algo_ops->run) {
 		return PSO_FAILURE;
@@ -43,41 +43,41 @@ int execute_pso_algorithm(struct PSO_context *ctx) {
 	return PSO_SUCCESS;
 }
 
-void st_pso_config_init(struct PSO_context *ctx) {
+void st_pso_config_init(struct pso_context *ctx) {
 	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
-    // ctx->config.population 				= 		pso_cfg_population; // depends on input
-    ctx->config.dimension 					= 		pso_cfg_dimension;
-    ctx->config.max_iter 					= 		pso_cfg_max_iter; 
+    // ctx->config.population 				= 		PSO_CFG_POPULATION; // depends on input
+    ctx->config.dimension 					= 		PSO_CFG_DIMENSION;
+    ctx->config.max_iter 					= 		PSO_CFG_MAX_ITER; 
 
-    ctx->config.v_max 						= 		pso_cfg_v_max;
-    ctx->config.v_min 						= 		pso_cfg_v_min;
-	ctx->config.v_ini						=		pso_cfg_v_ini;
+    ctx->config.v_max 						= 		PSO_CFG_V_MAX;
+    ctx->config.v_min 						= 		PSO_CFG_V_MIN;
+	ctx->config.v_ini						=		PSO_CFG_V_INI;
 
-    ctx->config.w_max 						= 		pso_cfg_w_max;
-    ctx->config.w_min 						= 		pso_cfg_w_min;
+    ctx->config.w_max 						= 		PSO_CFG_W_MAX;
+    ctx->config.w_min 						= 		PSO_CFG_W_MIN;
 
-    ctx->config.c1 							= 		pso_cfg_c1;
-    ctx->config.c2 							=		pso_cfg_c2;
+    ctx->config.c1 							= 		PSO_CFG_C1;
+    ctx->config.c2 							=		PSO_CFG_C2;
 
-    ctx->config.dec_factor 					= 		pso_cfg_dec_factor;
-    ctx->config.inc_factor 					=		pso_cfg_inc_factor;
+    ctx->config.dec_factor 					= 		PSO_CFG_DEC_FACTOR;
+    ctx->config.inc_factor 					=		PSO_CFG_INC_FACTOR;
 
-    ctx->config.border_side_len 			= 		(zncc_ctx->ref_subset_info.side_len) * pso_cfg_border_scale;
+    ctx->config.border_side_len 			= 		(zncc_ctx->ref_subset_info.side_len) * PSO_CFG_BORDER_SCALE;
 	ctx->global_best.value					=		-FLT_MAX;
 }
 
-void st_pso_layout_init(struct PSO_context *ctx) {
+void st_pso_layout_init(struct pso_context *ctx) {
 	// init st_pso_config_init() first
 	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
 	if (zncc_ctx == NULL) return;
-    ctx->config.layout.side_len_pt 			= 		pso_side_len_pt;
+    ctx->config.layout.side_len_pt 			= 		PSO_SIDE_LEN_PT;
     ctx->config.layout.grid_spacing 		= 		(ctx->config.border_side_len - 1) / (ctx->config.layout.side_len_pt - 1);
     ctx->config.layout.fixed_particles 		= 		ctx->config.layout.side_len_pt * ctx->config.layout.side_len_pt;
 	ctx->config.layout.shift_side_len_half 	= 		((ctx->config.layout.side_len_pt-1)/2) * ctx->config.layout.grid_spacing;
 }
 
-int st_pso_memory_alloc(struct PSO_context *ctx) {
-	ctx->particle = malloc(sizeof(struct PSO_particle)*ctx->config.population);
+int st_pso_memory_alloc(struct pso_context *ctx) {
+	ctx->particle = malloc(sizeof(struct pso_particle)*ctx->config.population);
 	if (!ctx->particle) { 
 		SYS_DBG("malloc particle failed!!\n");
 		return -1;
@@ -85,13 +85,13 @@ int st_pso_memory_alloc(struct PSO_context *ctx) {
 	return 0;
 }
 
-struct PSO_algorithm_ops standard_pso_algo_ops = {
+struct pso_algorithm_ops standard_pso_algo_ops = {
     .init           = 	st_pso_algo_init,
     .run  			= 	st_pso_algo_run,
 	.cleanup		= 	st_pso_algo_cleanup
 };
 
-int st_pso_algo_init(struct PSO_context *ctx) {
+int st_pso_algo_init(struct pso_context *ctx) {
 	SYS_DBG("st_pso_algo_init\n");
     if (ctx == NULL) return -1;
 	st_pso_config_init(ctx);
@@ -107,7 +107,7 @@ int st_pso_algo_init(struct PSO_context *ctx) {
 	return 0;
 }
 
-int st_pso_algo_run(struct PSO_context *ctx) {
+int st_pso_algo_run(struct pso_context *ctx) {
 	SYS_DBG("st_pso_algo_run\n");
 	if (ctx == NULL) return -1;
 	double c1 = ctx->config.c1;
@@ -115,7 +115,7 @@ int st_pso_algo_run(struct PSO_context *ctx) {
 	double border_side_len = ctx->config.border_side_len;
 	double border_side_len_half = 0.5 * (border_side_len - 1);
 	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
-	struct PSO_particle *particles = ctx->particle;
+	struct pso_particle *particles = ctx->particle;
 	double spacing = ctx->config.layout.grid_spacing;
 	double half_len = (double)ctx->config.layout.shift_side_len_half;
 	init_random_seed(); // initialize random var (only do one time)
@@ -200,7 +200,7 @@ int st_pso_algo_run(struct PSO_context *ctx) {
 	return SYS_SUCCESS;
 }
 
-int st_pso_algo_cleanup(struct PSO_context *ctx) {
+int st_pso_algo_cleanup(struct pso_context *ctx) {
 	SYS_DBG("st_pso_algo_cleanup\n");
 	if (ctx == NULL) return -1;
 	if (ctx->particle) {

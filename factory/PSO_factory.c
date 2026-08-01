@@ -1,7 +1,7 @@
 #include "system_comm.h"
 #include "PSO_comm.h"
 
-void PSO_create_factory(PSO_COST_TYPE type, struct sys_info *info) {
+void pso_create_factory(pso_cost_type type, struct sys_info *info) {
     // SELECT PSO COST FUNC TYPE
     if (type == PSO_TYPE_ZNCC) {
         struct dic_zncc_context *zncc_ctx = malloc(sizeof(struct dic_zncc_context));
@@ -21,7 +21,7 @@ void PSO_create_factory(PSO_COST_TYPE type, struct sys_info *info) {
     }
 }
 
-int PSO_destroy(struct PSO_context *pso_ctx) {
+int pso_destroy(struct pso_context *pso_ctx) {
     if (!pso_ctx) return PSO_FAILURE;
     if (pso_ctx->cost_ops && pso_ctx->cost_ops->cleanup) {
         pso_ctx->cost_ops->cleanup(pso_ctx->priv);

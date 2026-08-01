@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-typedef struct IMG_info{
+typedef struct img_info{
     double *ref_data;
     double *cur_data;
     uint32_t width;
     uint32_t height;
     uint32_t pixel_format;
-} IMG_info;
+} img_info;
 
 #endif

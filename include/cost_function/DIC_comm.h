@@ -47,11 +47,11 @@ double get_subset_mean(const dic_subset_info *subset);
 void zncc_ctx_init(struct sys_info *info);
 int zncc_subset_alloc(struct dic_zncc_context *zncc_ctx);
 int zncc_init(struct sys_info *info);
-double zncc_cost_function(struct PSO_context *ctx);
-int zncc_cleanup(struct PSO_context *ctx);
+double zncc_cost_function(struct pso_context *ctx);
+int zncc_cleanup(struct pso_context *ctx);
 int ssd_init(struct sys_info *info);
-double ssd_cost_function(struct PSO_context *ctx);
-int ssd_cleanup(struct PSO_context *ctx);
+double ssd_cost_function(struct pso_context *ctx);
+int ssd_cleanup(struct pso_context *ctx);
 
 extern struct pso_cost_func_ops zncc_ops;
 extern struct pso_cost_func_ops ssd_ops;
