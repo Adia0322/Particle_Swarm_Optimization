@@ -6,28 +6,44 @@
 |  V1.00.20260801 |  initial release for PSO                       |
 +------------------------------------------------------------------+
 ```
-Hybrid PSO: C-Core with Python Interface
+## Introduction
+Particle Swarm Optimization (PSO) is a population-based optimization algorithm inspired by swarm intelligence, which searches for optimal solutions through iterative particle updates.  
 
-Cost function: DIC ZNCC (Zero mean Normalized Cross-Correlation) correlation criteria
+### Features  
+* Hybrid PSO: C core with Python iInterface  
+* Cost function: ZNCC (Zero-mean Normalized Cross-Correlation) based image matching for position evaluation
+> This project demonstrates target point displacement estimation using a high-efficiency and accurate PSO algorithm.
 
-## Goal
-Measure the target point displacement in image  
+## Example
+Estimate target point displacement between reference and deformed images.
 ```
 Target point(x,y) = (426,320)
 ```
-## Image:
+### Image
 * reference image  
 <img src="image/img1.jpg" width="80%" alt="reference image">  
 
 * deformed image (x:+5, y:+5) 
 <img src="image/img1_shefted_5_5.jpg" width="80%" alt="reference image">  
 
-## How to run
-```
-python main.py
-```
+### Requirements
 
-## Result  
+* Windows 11
+* MinGW GCC
+* Python 3.13.3
+
+### How to run
+* Build
+```shell
+# shell
+mingw-make all
 ```
-Result: x=4.9, y=4.9, coefficient=0.9941199591792473
+* Run
+```shell
+# shell
+python .\run_PSO.py
+```
+### Result  
+```
+Result: x=5.006, y=4.989, coefficient=0.998
 ```

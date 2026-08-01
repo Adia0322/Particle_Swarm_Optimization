@@ -72,5 +72,5 @@ if __name__ == "__main__":
     ref_x, ref_y            = 426, 320
     start_x, start_y        = 426, 320
     result                  = proc.run(img1, img2, [ref_y, ref_x], [start_y, start_x])
-    print(f"Result: x={result['x']}, y={result['y']}, coefficient={result['coef']}")
+    print(f"Result: x={result['x']:.3f}, y={result['y']:.3f}, coefficient={result['coef']:.3f}")
 
