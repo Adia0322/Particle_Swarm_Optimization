@@ -13,7 +13,7 @@
 // #define SYS_DBG_EN                				1
 #define SYS_ERR_EN				  				1
 
-#define square(x) ((x)*(x))
+#define SQUARE(x) ((x)*(x))
 #define mean(x,y) ((x)/((y)*(y)))
 
 #define IMG_WIDTH_640                           640
@@ -43,24 +43,24 @@ typedef enum {
     PSO_DIC,
 } SYS_TASK_TYPE;
 
-typedef struct SYS_ARGS_INFO {
+typedef struct sys_args_info {
 	int **args_ptr;
 	int args_num;
 	int args_idx;
-} SYS_ARGS_INFO;
+} sys_args_info;
 
-typedef struct SYS_INFO {
+typedef struct sys_info {
 	int dev_num;
 	int dev_idx;
-	SYS_ARGS_INFO args_info;
+	sys_args_info args_info;
 	PSO_context pso_ctx;
-	DIC_context dic_ctx;
-} SYS_INFO;
+	dic_context dic_ctx;
+} sys_info;
 
 void init_random_seed();
 double random_digit(void);
 double get_mean(double sum, int side_len);
-struct SYS_INFO *SYS_create();
-int SYS_clean(SYS_INFO *info);
+struct sys_info *sys_create();
+int sys_clean(sys_info *info);
 
 #endif

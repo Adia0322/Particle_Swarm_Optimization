@@ -3,8 +3,8 @@
 #include "cost_function/DIC_comm.h"
 
 
-struct SYS_INFO *SYS_create() {
-    struct SYS_INFO *info = malloc(sizeof(struct SYS_INFO));
+struct sys_info *sys_create() {
+    struct sys_info *info = malloc(sizeof(struct sys_info));
     if (!info) {
         SYS_DBG("fail to create system memory!\n");
         return NULL;
@@ -14,9 +14,9 @@ struct SYS_INFO *SYS_create() {
     return info;
 }
 
-int SYS_clean(SYS_INFO *info) {
+int sys_clean(sys_info *info) {
     if (!info) {
-        SYS_DBG("SYS_clean failed!!\n");
+        SYS_DBG("sys_clean failed!!\n");
         return SYS_FAILURE;
     } else {
         free(info);

@@ -27,7 +27,7 @@
 #define pso_side_len_pt             5
 
 typedef struct PSO_context PSO_context;
-typedef struct SYS_INFO SYS_INFO;
+typedef struct sys_info sys_info;
 typedef struct PSO_context PSO_context;
 
 typedef enum {
@@ -82,7 +82,7 @@ typedef struct PSO_context {
     struct PSO_config config;
     struct IMG_info img_info;
     struct PSO_algorithm_ops *algo_ops;     // 與priv不同 填入特定的ops: 表示:怎麼做 (指標指向靜態Struct)
-    struct PSO_cost_func_ops *cost_ops;
+    struct pso_cost_func_ops *cost_ops;
     struct PSO_particle *particle;
     struct PSO_global_best global_best; 
     void *priv;                             // private 為特定任務中所需的"資料" 表示:用什麼做
@@ -94,9 +94,15 @@ struct PSO_algorithm_ops {
     int (*cleanup)(PSO_context *ctx);
 };
 
+struct pso_cost_func_ops {
+    int (*init)(sys_info *info);
+    double (*cost_function)(PSO_context *ctx);
+    int (*cleanup)(PSO_context *ctx);
+};
+
 // declare implementation
-void run_pso(struct SYS_INFO *info);
-void PSO_create_factory(PSO_COST_TYPE type, struct SYS_INFO *info);
+void run_pso(struct sys_info *info);
+void PSO_create_factory(PSO_COST_TYPE type, struct sys_info *info);
 int PSO_destroy(struct PSO_context *pso_ctx);
 int execute_pso_algorithm(struct PSO_context *ctx);
 int st_pso_algo_init(struct PSO_context *ctx);
@@ -104,8 +110,8 @@ int st_pso_algo_run(struct PSO_context *ctx);
 int st_pso_algo_cleanup(struct PSO_context *ctx);
 double double_rand_nor(void);
 
-extern struct PSO_cost_func_ops zncc_ops;
-extern struct PSO_cost_func_ops ssd_ops;
+extern struct pso_cost_func_ops zncc_ops;
+extern struct pso_cost_func_ops ssd_ops;
 extern struct PSO_algorithm_ops standard_pso_algo_ops;
 
 #endif

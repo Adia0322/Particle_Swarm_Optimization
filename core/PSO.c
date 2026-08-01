@@ -44,7 +44,7 @@ int execute_pso_algorithm(struct PSO_context *ctx) {
 }
 
 void st_pso_config_init(struct PSO_context *ctx) {
-	struct DIC_ZNCC_context *zncc_ctx = (struct DIC_ZNCC_context *)ctx->priv;
+	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
     // ctx->config.population 				= 		pso_cfg_population; // depends on input
     ctx->config.dimension 					= 		pso_cfg_dimension;
     ctx->config.max_iter 					= 		pso_cfg_max_iter; 
@@ -68,7 +68,7 @@ void st_pso_config_init(struct PSO_context *ctx) {
 
 void st_pso_layout_init(struct PSO_context *ctx) {
 	// init st_pso_config_init() first
-	struct DIC_ZNCC_context *zncc_ctx = (struct DIC_ZNCC_context *)ctx->priv;
+	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
 	if (zncc_ctx == NULL) return;
     ctx->config.layout.side_len_pt 			= 		pso_side_len_pt;
     ctx->config.layout.grid_spacing 		= 		(ctx->config.border_side_len - 1) / (ctx->config.layout.side_len_pt - 1);
@@ -114,7 +114,7 @@ int st_pso_algo_run(struct PSO_context *ctx) {
 	double c2 = ctx->config.c2;
 	double border_side_len = ctx->config.border_side_len;
 	double border_side_len_half = 0.5 * (border_side_len - 1);
-	struct DIC_ZNCC_context *zncc_ctx = (struct DIC_ZNCC_context *)ctx->priv;
+	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
 	struct PSO_particle *particles = ctx->particle;
 	double spacing = ctx->config.layout.grid_spacing;
 	double half_len = (double)ctx->config.layout.shift_side_len_half;
@@ -215,7 +215,7 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
                      int population, int subset_side_len,\
                      double *img_ref_pt, double *img_cur_pt, double *result){
     if (ref_img == NULL || cur_img == NULL) return;
-    struct SYS_INFO *info = SYS_create();
+    struct sys_info *info = sys_create();
     if (!info) return;
     
     // initial image info
@@ -237,7 +237,7 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
         result[0] = info->pso_ctx.global_best.position[0]; // y
         result[1] = info->pso_ctx.global_best.position[1]; // x
         result[2] = info->pso_ctx.global_best.value; // coef
-        SYS_clean(info);
+        sys_clean(info);
     }
 }
 

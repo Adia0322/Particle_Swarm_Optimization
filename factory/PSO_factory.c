@@ -1,15 +1,15 @@
 #include "system_comm.h"
 #include "PSO_comm.h"
 
-void PSO_create_factory(PSO_COST_TYPE type, struct SYS_INFO *info) {
+void PSO_create_factory(PSO_COST_TYPE type, struct sys_info *info) {
     // SELECT PSO COST FUNC TYPE
     if (type == PSO_TYPE_ZNCC) {
-        struct DIC_ZNCC_context *zncc_ctx = malloc(sizeof(struct DIC_ZNCC_context));
+        struct dic_zncc_context *zncc_ctx = malloc(sizeof(struct dic_zncc_context));
         info->pso_ctx.priv       = zncc_ctx;
         info->pso_ctx.cost_ops   = &zncc_ops;
     } 
     else if (type == PSO_TYPE_SSD) {
-        struct DIC_SSD_context *ssd_ctx = malloc(sizeof(struct DIC_SSD_context));
+        struct dis_ssd_context *ssd_ctx = malloc(sizeof(struct dis_ssd_context));
         info->pso_ctx.priv       = ssd_ctx;
         info->pso_ctx.cost_ops   = &ssd_ops;
     }

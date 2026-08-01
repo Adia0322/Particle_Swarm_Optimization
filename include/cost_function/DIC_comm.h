@@ -5,61 +5,55 @@
 #include <stdlib.h>
 #include "PSO_comm.h"
 
-typedef struct DIC_config {
+typedef struct dic_config {
     uint16_t subset_side_len;
     uint16_t scan_side_len;
-} DIC_config;
+} dic_config;
 
-typedef struct DIC_context {
-    struct DIC_config config;
+typedef struct dic_context {
+    struct dic_config config;
     double *img_ref_pt_pos;
     double *img_cur_pt_pos;
     void *priv;
-} DIC_context;
+} dic_context;
 
-typedef struct DIC_subset_info {
+typedef struct dic_subset_info {
     double *subset_data;
     double mean;
     double ref_sum_den;
     int side_len;
     int total_pixels;
-} DIC_subset_info;
+} dic_subset_info;
 
-typedef struct DIC_ZNCC_context {
-    struct DIC_subset_info ref_subset_info;
-    struct DIC_subset_info cur_subset_info;
+typedef struct dic_zncc_context {
+    struct dic_subset_info ref_subset_info;
+    struct dic_subset_info cur_subset_info;
     double *temp_subset;
     double *ref_subset_zero_mean;
     double subset_pt_cur_pos[2];
     double img_pt_ref_pos[2];
     double img_pt_cur_pos[2];
     int margin;
-} DIC_ZNCC_context;
+} dic_zncc_context;
 
-typedef struct DIC_SSD_context {
-    struct DIC_subset_info ref_subset_info;
-    struct DIC_subset_info cur_subset_info;
+typedef struct dis_ssd_context {
+    struct dic_subset_info ref_subset_info;
+    struct dic_subset_info cur_subset_info;
     double subset_pt_cur_pos[2];
     double img_pt_ref_pos[2];
-} DIC_SSD_context;
+} dis_ssd_context;
 
-struct PSO_cost_func_ops {
-    int (*init)(SYS_INFO *info);
-    double (*cost_function)(PSO_context *ctx);
-    int (*cleanup)(PSO_context *ctx);
-};
+double get_subset_mean(const dic_subset_info *subset);
+void zncc_ctx_init(struct sys_info *info);
+int zncc_subset_alloc(struct dic_zncc_context *zncc_ctx);
+int zncc_init(struct sys_info *info);
+double zncc_cost_function(struct PSO_context *ctx);
+int zncc_cleanup(struct PSO_context *ctx);
+int ssd_init(struct sys_info *info);
+double ssd_cost_function(struct PSO_context *ctx);
+int ssd_cleanup(struct PSO_context *ctx);
 
-double get_subset_mean(const DIC_subset_info *subset);
-void ZNCC_ctx_init(struct SYS_INFO *info);
-int ZNCC_subset_alloc(struct DIC_ZNCC_context *zncc_ctx);
-int ZNCC_init(struct SYS_INFO *info);
-double ZNCC_cost_function(struct PSO_context *ctx);
-int ZNCC_cleanup(struct PSO_context *ctx);
-int SSD_init(struct SYS_INFO *info);
-double SSD_cost_function(struct PSO_context *ctx);
-int SSD_cleanup(struct PSO_context *ctx);
-
-extern struct PSO_cost_func_ops zncc_ops;
-extern struct PSO_cost_func_ops ssd_ops;
+extern struct pso_cost_func_ops zncc_ops;
+extern struct pso_cost_func_ops ssd_ops;
 
 #endif
