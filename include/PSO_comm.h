@@ -96,11 +96,10 @@ struct pso_algorithm_ops {
 
 struct pso_cost_func_ops {
     int (*init)(sys_info *info);
-    double (*cost_function)(pso_context *ctx);
+    double (*cost_function)(pso_context *ctx, const double *position);
     int (*cleanup)(pso_context *ctx);
 };
 
-// declare implementation
 void run_pso(struct sys_info *info);
 void pso_create_factory(pso_cost_type type, struct sys_info *info);
 int pso_destroy(struct pso_context *pso_ctx);

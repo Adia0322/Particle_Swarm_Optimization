@@ -68,8 +68,7 @@ void st_pso_config_init(struct pso_context *ctx) {
 
 void st_pso_layout_init(struct pso_context *ctx) {
 	// init st_pso_config_init() first
-	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
-	if (zncc_ctx == NULL) return;
+	if (ctx == NULL) return;
     ctx->config.layout.side_len_pt 			= 		PSO_SIDE_LEN_PT;
     ctx->config.layout.grid_spacing 		= 		(ctx->config.border_side_len - 1) / (ctx->config.layout.side_len_pt - 1);
     ctx->config.layout.fixed_particles 		= 		ctx->config.layout.side_len_pt * ctx->config.layout.side_len_pt;
@@ -114,7 +113,6 @@ int st_pso_algo_run(struct pso_context *ctx) {
 	double c2 = ctx->config.c2;
 	double border_side_len = ctx->config.border_side_len;
 	double border_side_len_half = 0.5 * (border_side_len - 1);
-	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
 	struct pso_particle *particles = ctx->particle;
 	double spacing = ctx->config.layout.grid_spacing;
 	double half_len = (double)ctx->config.layout.shift_side_len_half;
@@ -130,9 +128,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].velocity[dim] = ctx->config.v_ini*(rand0_1());
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			zncc_ctx->subset_pt_cur_pos[0] = particles[p_idx].position[0]; // update pos for cost_function
-    		zncc_ctx->subset_pt_cur_pos[1] = particles[p_idx].position[1]; // update pos for cost_function
-			double cost = ctx->cost_ops->cost_function(ctx);
+			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
 			SYS_DBG("cost = %.4f\n", cost);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
@@ -150,9 +146,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].position[dim] = border_side_len_half * (rand0_1());
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			zncc_ctx->subset_pt_cur_pos[0] = particles[p_idx].position[0]; // update pos for cost_function
-    		zncc_ctx->subset_pt_cur_pos[1] = particles[p_idx].position[1]; // update pos for cost_function
-			double cost = ctx->cost_ops->cost_function(ctx);
+			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
 				ctx->global_best.value = cost;
@@ -176,10 +170,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].position[dim] += particles[p_idx].velocity[dim];
 				clamp_to_bounds(&particles[p_idx].position[dim], border_side_len_half, -border_side_len_half);
 			}
-			zncc_ctx->subset_pt_cur_pos[0] = particles[p_idx].position[0]; // update pos for cost_function
-    		zncc_ctx->subset_pt_cur_pos[1] = particles[p_idx].position[1]; // update pos for cost_function
-			double cost = ctx->cost_ops->cost_function(ctx);
-
+			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
 			if (cost > particles[p_idx].ind_best_value) {
 				particles[p_idx].ind_best_value = cost;
 				for (int dim = 0; dim<ctx->config.dimension; dim++) {

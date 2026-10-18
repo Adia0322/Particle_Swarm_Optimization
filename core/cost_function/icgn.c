@@ -164,12 +164,12 @@ int zncc_init(struct sys_info *info) {
 	return 0;
 }
 
-double zncc_cost_function(struct pso_context *ctx) {
+double zncc_cost_function(struct pso_context *ctx, const double *position) {
 	// SYS_DBG("zncc_cost_function\n");
-	if (ctx == NULL) return -10.0f; // result range: -1 ~ +1
-	struct dic_zncc_context *zncc_ctx = (struct dic_zncc_context *)ctx->priv;
-	double rel_pso_pt_y 				= zncc_ctx->subset_pt_cur_pos[0]; 	// Pi_x, Pi_y relative corrected coordinate
-	double rel_pso_pt_x 				= zncc_ctx->subset_pt_cur_pos[1]; 	// Pi_x, Pi_y relative corrected coordinate
+	if (ctx == NULL || ctx->priv == NULL || position == NULL) return NAN;
+	struct dic_zncc_context *zncc_ctx 	= ctx->priv; 						// Implicit Conversion
+	double rel_pso_pt_y 				= position[0]; 	// Pi_x, Pi_y relative corrected coordinate
+	double rel_pso_pt_x 				= position[1]; 	// Pi_x, Pi_y relative corrected coordinate
 	double img_cur_pt_y 				= zncc_ctx->img_pt_cur_pos[0]; 		// start point (fixed in whole PSO process)
 	double img_cur_pt_x 				= zncc_ctx->img_pt_cur_pos[1]; 		// start point (fixed in whole PSO process)
 	int img_width 						= ctx->img_info.width;
@@ -265,7 +265,7 @@ int ssd_init(struct sys_info *info) {
 	return 0;
 }
 
-double ssd_cost_function(struct pso_context *ctx) {
+double ssd_cost_function(struct pso_context *ctx, const double *position) {
 	return 0;
 }
 
