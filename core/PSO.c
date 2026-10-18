@@ -108,14 +108,13 @@ int st_pso_algo_init(struct pso_context *ctx) {
 int st_pso_algo_run(struct pso_context *ctx) {
 	SYS_DBG("st_pso_algo_run\n");
 	if (ctx == NULL) return -1;
-	double c1 = ctx->config.c1;
-	double c2 = ctx->config.c2;
-	double border_side_len = ctx->config.border_side_len;
-	double border_side_len_half = 0.5 * (border_side_len - 1);
-	struct pso_particle *particles = ctx->particle;
-	double spacing = ctx->config.layout.grid_spacing;
-	double half_len = (double)ctx->config.layout.shift_side_len_half;
-	init_random_seed(); // initialize random var (only do one time)
+	double c1 								= ctx->config.c1;
+	double c2 								= ctx->config.c2;
+	double border_side_len_half 			= 0.5 * (ctx->config.border_side_len - 1);
+	struct pso_particle *particles 			= ctx->particle;
+	double spacing 							= ctx->config.layout.grid_spacing;
+	double half_len 						= ctx->config.layout.shift_side_len_half;
+	init_random_seed(); // initialize random var (only do once)
 	// init setup (initialize fixed points)
 	for (int p_idx = 0; p_idx < ctx->config.population; p_idx++) {
 		if (p_idx < (ctx->config.layout.fixed_particles)) {
@@ -230,7 +229,6 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
         sys_clean(info);
     }
 }
-
 
 int main(int argc, char *argv[]) {
     return 0;

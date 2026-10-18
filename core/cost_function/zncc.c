@@ -20,7 +20,7 @@ double inline get_subset_mean(const dic_subset_info *subset) {
     return sum / (double)num;
 }
 
-void precompute_ref_sum_den(struct dic_zncc_context *zncc_ctx) {
+void zncc_precompute_ref_sum_den(struct dic_zncc_context *zncc_ctx) {
 	double *ref_subset_data 			= zncc_ctx->ref_subset_info.subset_data;
 	double *ref_subset_zero_mean 		= zncc_ctx->ref_subset_zero_mean;
 	double ref_subset_mean 				= zncc_ctx->ref_subset_info.mean;
@@ -75,16 +75,15 @@ static inline void extract_subset_bilinear(const double *img, int w, int h,
     }
 }
 
-static void get_ref_subset_data(struct sys_info *info) {
-	struct dic_zncc_context *zncc_ctx = info->pso_ctx.priv;
-	double *pos_ptr 				= info->dic_ctx.img_ref_pt_pos;
-	double *ref_img_data 			= info->pso_ctx.img_info.ref_data;
-	int subset_side_len				= info->dic_ctx.config.subset_side_len;
-	int img_width 					= info->pso_ctx.img_info.width;
-	int img_height 					= info->pso_ctx.img_info.height;
-	double img_pt_y_shift 			= pos_ptr[0] - (subset_side_len - 1) / 2.0f;
-	double img_pt_x_shift 			= pos_ptr[1] - (subset_side_len - 1) / 2.0f;
-	double *ref_subset_data 		= zncc_ctx->ref_subset_info.subset_data;
+static void zncc_get_ref_subset_data(struct sys_info *info, struct dic_zncc_context *zncc_ctx) {
+	double *pos_ptr 					= info->dic_ctx.img_ref_pt_pos;
+	double *ref_img_data 				= info->pso_ctx.img_info.ref_data;
+	int subset_side_len					= info->dic_ctx.config.subset_side_len;
+	int img_width 						= info->pso_ctx.img_info.width;
+	int img_height 						= info->pso_ctx.img_info.height;
+	double img_pt_y_shift 				= pos_ptr[0] - (subset_side_len - 1) / 2.0f;
+	double img_pt_x_shift 				= pos_ptr[1] - (subset_side_len - 1) / 2.0f;
+	double *ref_subset_data 			= zncc_ctx->ref_subset_info.subset_data;
 	for (int row = 0; row < subset_side_len; row++) {
 		for (int col = 0; col < subset_side_len; col++) {
 			double img_pt_y_shift_row = img_pt_y_shift + row;
@@ -97,35 +96,46 @@ static void get_ref_subset_data(struct sys_info *info) {
 	zncc_ctx->ref_subset_info.mean = get_subset_mean(&zncc_ctx->ref_subset_info);
 }
 
-void zncc_ctx_init(struct sys_info *info) {
-	if (!info) return;
-	struct dic_zncc_context *zncc_ctx = info->pso_ctx.priv;
-	if (zncc_ctx == NULL) return;
-	zncc_ctx->ref_subset_info.side_len 		= 	info->dic_ctx.config.subset_side_len;
-	zncc_ctx->cur_subset_info.side_len 		= 	info->dic_ctx.config.subset_side_len;
-	zncc_ctx->img_pt_ref_pos[0]				=	info->dic_ctx.img_ref_pt_pos[0];
-	zncc_ctx->img_pt_ref_pos[1]				=	info->dic_ctx.img_ref_pt_pos[1];
-	zncc_ctx->img_pt_cur_pos[0]				=	info->dic_ctx.img_cur_pt_pos[0];
-	zncc_ctx->img_pt_cur_pos[1]				=	info->dic_ctx.img_cur_pt_pos[1];
-	zncc_ctx->cur_subset_info.subset_data 	= 	NULL; // calculate in runtime		
-	zncc_ctx->ref_subset_info.total_pixels 	= 	SQUARE(zncc_ctx->ref_subset_info.side_len);
-	zncc_ctx->cur_subset_info.total_pixels 	= 	SQUARE(zncc_ctx->cur_subset_info.side_len);
-	zncc_ctx->margin						=	interp_safe_margin();
+void zncc_configure(struct dic_zncc_context *ctx, struct dic_context *dic_ctx) {
+	if (!dic_ctx) return;
+	if (ctx == NULL) return;
+	ctx->ref_subset_info.side_len 		= dic_ctx->config.subset_side_len;
+	ctx->cur_subset_info.side_len 		= dic_ctx->config.subset_side_len;
+	ctx->img_pt_ref_pos[0]				= dic_ctx->img_ref_pt_pos[0];
+	ctx->img_pt_ref_pos[1]				= dic_ctx->img_ref_pt_pos[1];
+	ctx->img_pt_cur_pos[0]				= dic_ctx->img_cur_pt_pos[0];
+	ctx->img_pt_cur_pos[1]				= dic_ctx->img_cur_pt_pos[1];
+	ctx->cur_subset_info.subset_data 	= NULL; // calculate in runtime		
+	ctx->ref_subset_info.total_pixels 	= SQUARE(ctx->ref_subset_info.side_len);
+	ctx->cur_subset_info.total_pixels 	= SQUARE(ctx->cur_subset_info.side_len);
+	ctx->margin							= interp_safe_margin();
 }
 
-int zncc_subset_alloc(struct dic_zncc_context *zncc_ctx) {
+int zncc_alloc_buffers(struct dic_zncc_context *zncc_ctx) {
 	int subset_memory_size = SQUARE(zncc_ctx->cur_subset_info.side_len) * sizeof(double);
 	zncc_ctx->cur_subset_info.subset_data 	= malloc(subset_memory_size);
 	zncc_ctx->ref_subset_info.subset_data 	= malloc(subset_memory_size);
 	zncc_ctx->temp_subset 				  	= malloc(subset_memory_size);
 	zncc_ctx->ref_subset_zero_mean		  	= malloc(subset_memory_size);
-	if (!zncc_ctx->cur_subset_info.subset_data || !zncc_ctx->ref_subset_info.subset_data) { 
-		SYS_DBG("Malloc subset_data failed!!\n");
-		free(zncc_ctx->cur_subset_info.subset_data);
-    	free(zncc_ctx->ref_subset_info.subset_data);
-		return -1;
+	if (!zncc_ctx->cur_subset_info.subset_data ||
+		!zncc_ctx->ref_subset_info.subset_data ||
+		!zncc_ctx->temp_subset ||
+		!zncc_ctx->ref_subset_zero_mean) { 
+		goto error_free_buffers;
 	}
 	return 0;
+
+error_free_buffers:
+	SYS_DBG("Malloc subset_data failed!!\n");
+	free(zncc_ctx->cur_subset_info.subset_data);
+	free(zncc_ctx->ref_subset_info.subset_data);
+	free(zncc_ctx->temp_subset);
+	free(zncc_ctx->ref_subset_zero_mean);
+	zncc_ctx->ref_subset_zero_mean = NULL;
+	zncc_ctx->temp_subset = NULL;
+	zncc_ctx->ref_subset_info.subset_data = NULL;
+	zncc_ctx->cur_subset_info.subset_data = NULL;
+	return -1;
 }
 
 struct pso_cost_func_ops zncc_ops = {
@@ -137,18 +147,18 @@ struct pso_cost_func_ops zncc_ops = {
 int zncc_init(struct sys_info *info) {
 	SYS_DBG("zncc_init\n");
 	if (!info) return -1;
-	struct dic_zncc_context *zncc_ctx = info->pso_ctx.priv;
-	if (zncc_ctx == NULL) return -1;
+	struct dic_zncc_context *ctx = info->pso_ctx.priv;
+	if (ctx == NULL) return -1;
 
-	zncc_ctx_init(info);
+	zncc_configure(ctx, &info->dic_ctx); // &info->dic_ctx: is setted well at pso_optimize, now transfer to ctx(priv)
 
-	if (zncc_subset_alloc(zncc_ctx) != 0) {
+	if (zncc_alloc_buffers(ctx) != 0) {
 		SYS_DBG("Allocating memory failed!!\n");
 		return -1;
 	}
 
-	get_ref_subset_data(info); // calculate ref_subset_data and put it into: zncc_ctx->ref_subset_info.subset_data
-	precompute_ref_sum_den(zncc_ctx);
+	zncc_get_ref_subset_data(info, ctx); // calculate ref_subset_data and put it into: ctx->ref_subset_info.subset_data
+	zncc_precompute_ref_sum_den(ctx);
 	return 0;
 }
 

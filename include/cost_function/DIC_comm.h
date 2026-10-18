@@ -44,8 +44,8 @@ typedef struct dis_ssd_context {
 } dis_ssd_context;
 
 double get_subset_mean(const dic_subset_info *subset);
-void zncc_ctx_init(struct sys_info *info);
-int zncc_subset_alloc(struct dic_zncc_context *zncc_ctx);
+void zncc_configure(struct dic_zncc_context *ctx, struct dic_context *dic_ctx);
+int zncc_alloc_buffers(struct dic_zncc_context *zncc_ctx);
 int zncc_init(struct sys_info *info);
 double zncc_cost_function(struct pso_context *ctx, const double *position);
 int zncc_cleanup(struct pso_context *ctx);
