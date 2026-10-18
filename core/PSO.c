@@ -223,7 +223,7 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
     info->pso_ctx.algo_ops                  = &standard_pso_algo_ops;
 
     if (info) {
-        run_pso(info);
+        run_pso(info, cost_func_zncc);
         SYS_DBG("global_best_pos: (x,y) = (%.2f,%.2f)\n", info->pso_ctx.global_best.position[1], info->pso_ctx.global_best.position[0]);
         result[0] = info->pso_ctx.global_best.position[0]; // y
         result[1] = info->pso_ctx.global_best.position[1]; // x

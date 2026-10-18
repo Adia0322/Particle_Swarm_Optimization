@@ -9,18 +9,6 @@
 extern int interp_safe_margin();
 extern double bilinear(double *data, int width, int height, double x, double y);
 
-void run_pso(struct sys_info *info) {
-	// create pso_context and put DIC info in it
-	pso_create_factory(PSO_TYPE_ZNCC, info);
-
-	if (!info->pso_ctx.priv) return;
-
-    if (execute_pso_algorithm(&info->pso_ctx) != 0) {
-        SYS_DBG("execute_pso_algorithm failed!!\n");
-        return;
-    }
-}
-
 double inline get_subset_mean(const dic_subset_info *subset) {
 	if (!subset) return NAN;
     double sum = 0.0f;
@@ -254,21 +242,3 @@ int zncc_cleanup(struct pso_context *ctx) {
 	return 0;
 }
 
-// SSD Critiria
-struct pso_cost_func_ops ssd_ops = {
-	.init			= ssd_init,
-    .cost_function  = ssd_cost_function,
-	.cleanup		= ssd_cleanup
-};
-
-int ssd_init(struct sys_info *info) {
-	return 0;
-}
-
-double ssd_cost_function(struct pso_context *ctx, const double *position) {
-	return 0;
-}
-
-int ssd_cleanup(struct pso_context *ctx) {
-	return 0;
-}
