@@ -22,7 +22,8 @@
 #define PSO_CFG_C2                  2.0f
 #define PSO_CFG_DEC_FACTOR          1.0f
 #define PSO_CFG_INC_FACTOR          1.0f
-#define PSO_CFG_BORDER_SCALE        0.8
+#define PSO_CFG_BORDER_LEN          1
+#define PSO_CFG_BORDER_SCALE        0.05
 
 #define PSO_SIDE_LEN_PT             5
 
