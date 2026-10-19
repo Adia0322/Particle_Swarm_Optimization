@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "PSO_comm.h"
+#include "image_comm.h"
 
 typedef struct dic_config {
     uint16_t subset_side_len;
@@ -12,6 +13,7 @@ typedef struct dic_config {
 
 typedef struct dic_context {
     struct dic_config config;
+    struct img_info img_info;
     double *img_ref_pt_pos;
     double *img_cur_pt_pos;
     void *priv;
@@ -28,6 +30,7 @@ typedef struct dic_subset_info {
 typedef struct dic_zncc_context {
     struct dic_subset_info ref_subset_info;
     struct dic_subset_info cur_subset_info;
+    struct img_info img_info;
     double *temp_subset;
     double *ref_subset_zero_mean;
     double subset_pt_cur_pos[2];

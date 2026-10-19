@@ -3,7 +3,7 @@
 #include <math.h>
 #include <errno.h>
 #include "system_comm.h"
-#include "cost_function/DIC_comm.h"
+#include "DIC_comm.h"
 #include "PSO_comm.h"
 
 extern int interp_safe_margin();
@@ -77,10 +77,10 @@ static inline void extract_subset_bilinear(const double *img, int w, int h,
 
 static void zncc_get_ref_subset_data(struct sys_info *info, struct dic_zncc_context *zncc_ctx) {
 	double *pos_ptr 					= info->dic_ctx.img_ref_pt_pos;
-	double *ref_img_data 				= info->pso_ctx.img_info.ref_data;
+	double *ref_img_data 				= info->dic_ctx.img_info.ref_data;
 	int subset_side_len					= info->dic_ctx.config.subset_side_len;
-	int img_width 						= info->pso_ctx.img_info.width;
-	int img_height 						= info->pso_ctx.img_info.height;
+	int img_width 						= info->dic_ctx.img_info.width;
+	int img_height 						= info->dic_ctx.img_info.height;
 	double img_pt_y_shift 				= pos_ptr[0] - (subset_side_len - 1) / 2.0f;
 	double img_pt_x_shift 				= pos_ptr[1] - (subset_side_len - 1) / 2.0f;
 	double *ref_subset_data 			= zncc_ctx->ref_subset_info.subset_data;
@@ -99,6 +99,7 @@ static void zncc_get_ref_subset_data(struct sys_info *info, struct dic_zncc_cont
 void zncc_configure(struct dic_zncc_context *ctx, struct dic_context *dic_ctx) {
 	if (!dic_ctx) return;
 	if (ctx == NULL) return;
+	ctx->img_info 						= dic_ctx->img_info;
 	ctx->ref_subset_info.side_len 		= dic_ctx->config.subset_side_len;
 	ctx->cur_subset_info.side_len 		= dic_ctx->config.subset_side_len;
 	ctx->img_pt_ref_pos[0]				= dic_ctx->img_ref_pt_pos[0];
@@ -170,9 +171,9 @@ double zncc_cost_function(struct pso_context *ctx, const double *position) {
 	double rel_pso_pt_x 				= position[1]; 	// Pi_x, Pi_y relative corrected coordinate
 	double img_cur_pt_y 				= zncc_ctx->img_pt_cur_pos[0]; 		// start point (fixed in whole PSO process)
 	double img_cur_pt_x 				= zncc_ctx->img_pt_cur_pos[1]; 		// start point (fixed in whole PSO process)
-	int img_width 						= ctx->img_info.width;
-	int img_height 						= ctx->img_info.height;
-	double *cur_img_data 				= ctx->img_info.cur_data;
+	int img_width 						= zncc_ctx->img_info.width;
+	int img_height 						= zncc_ctx->img_info.height;
+	double *cur_img_data 				= zncc_ctx->img_info.cur_data;
 	int subset_side_len 				= zncc_ctx->ref_subset_info.side_len;
 	double *ref_subset_data 			= zncc_ctx->ref_subset_info.subset_data;
 	double img_pso_pt_y 				= img_cur_pt_y + rel_pso_pt_y; 		// pso particle absolute coordinate

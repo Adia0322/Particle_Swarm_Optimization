@@ -1,6 +1,6 @@
 
 #include "system_comm.h"
-#include "cost_function/DIC_comm.h"
+#include "DIC_comm.h"
 
 
 struct sys_info *sys_create() {

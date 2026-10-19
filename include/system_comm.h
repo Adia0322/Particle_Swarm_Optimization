@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "cost_function/DIC_comm.h"
+#include "DIC_comm.h"
 #include "PSO_comm.h"
 #include "image_comm.h"
 
@@ -54,7 +54,7 @@ typedef struct sys_info {
 	int dev_idx;
 	sys_args_info args_info;
 	pso_context pso_ctx;
-	dic_context dic_ctx;
+	dic_context dic_ctx; // !!! must remove outside
 } sys_info;
 
 void init_random_seed();

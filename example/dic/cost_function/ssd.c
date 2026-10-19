@@ -3,7 +3,7 @@
 #include <math.h>
 #include <errno.h>
 #include "system_comm.h"
-#include "cost_function/DIC_comm.h"
+#include "DIC_comm.h"
 #include "PSO_comm.h"
 
 // SSD Critiria

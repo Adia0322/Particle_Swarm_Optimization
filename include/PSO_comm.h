@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include "image_comm.h"
-#include "cost_function/DIC_comm.h"
 
 #define PSO_FAILURE                 -1
 #define PSO_SUCCESS                 0
@@ -30,6 +28,11 @@
 typedef struct pso_context pso_context;
 typedef struct sys_info sys_info;
 typedef struct pso_context pso_context;
+
+typedef enum {
+    PSO_MINIMIZE,
+    PSO_MAXIMIZE
+} pso_direction;
 
 typedef enum {
     VELOCITY,
@@ -81,7 +84,6 @@ struct pso_particle {
 
 typedef struct pso_context {
     struct pso_config config;
-    struct img_info img_info;
     struct pso_algorithm_ops *algo_ops;     // 與priv不同 填入特定的ops: 表示:怎麼做 (指標指向靜態Struct)
     struct pso_cost_func_ops *cost_ops;
     struct pso_particle *particle;

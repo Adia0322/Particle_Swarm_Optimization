@@ -2,7 +2,7 @@
 #include "PSO_comm.h"
 #include <float.h>
 #include <stdint.h>
-#include "cost_function/DIC_comm.h"
+#include "DIC_comm.h"
 
 static inline double rand0_1(void) {
     return (double)rand() * (1.0 / (double)RAND_MAX);
@@ -47,21 +47,15 @@ void st_pso_config_init(struct pso_context *ctx) {
     // ctx->config.population 				= 		PSO_CFG_POPULATION; // depends on input
     ctx->config.dimension 					= 		PSO_CFG_DIMENSION;
     ctx->config.max_iter 					= 		PSO_CFG_MAX_ITER; 
-
     ctx->config.v_max 						= 		PSO_CFG_V_MAX;
     ctx->config.v_min 						= 		PSO_CFG_V_MIN;
 	ctx->config.v_ini						=		PSO_CFG_V_INI;
-
     ctx->config.w_max 						= 		PSO_CFG_W_MAX;
     ctx->config.w_min 						= 		PSO_CFG_W_MIN;
-
     ctx->config.c1 							= 		PSO_CFG_C1;
     ctx->config.c2 							=		PSO_CFG_C2;
-
     ctx->config.dec_factor 					= 		PSO_CFG_DEC_FACTOR;
     ctx->config.inc_factor 					=		PSO_CFG_INC_FACTOR;
-
-    ctx->config.border_side_len 			= 		make_odd(ctx->img_info.height * PSO_CFG_BORDER_SCALE);
 	ctx->global_best.value					=		-FLT_MAX;
 }
 
@@ -197,37 +191,6 @@ int st_pso_algo_cleanup(struct pso_context *ctx) {
 		ctx->particle = NULL;
 	}
 	return SYS_SUCCESS;
-}
-
-__declspec(dllexport)
-void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
-                     int population, int subset_side_len,\
-                     double *img_ref_pt, double *img_cur_pt, double *result){
-    if (ref_img == NULL || cur_img == NULL) return;
-    struct sys_info *info = sys_create();
-    if (!info) return;
-    
-    // initial image info
-    info->pso_ctx.img_info.ref_data         = ref_img;
-    info->pso_ctx.img_info.cur_data         = cur_img;
-    info->pso_ctx.img_info.width            = width;
-    info->pso_ctx.img_info.height           = height;
-    info->pso_ctx.config.population         = population;
-    info->dic_ctx.config.subset_side_len    = subset_side_len;
-    info->dic_ctx.img_ref_pt_pos            = img_ref_pt;
-    info->dic_ctx.img_cur_pt_pos            = img_cur_pt;
-
-    // assign algo type
-    info->pso_ctx.algo_ops                  = &standard_pso_algo_ops;
-
-    if (info) {
-        run_pso(info, cost_func_zncc);
-        SYS_DBG("global_best_pos: (x,y) = (%.2f,%.2f)\n", info->pso_ctx.global_best.position[1], info->pso_ctx.global_best.position[0]);
-        result[0] = info->pso_ctx.global_best.position[0]; // y
-        result[1] = info->pso_ctx.global_best.position[1]; // x
-        result[2] = info->pso_ctx.global_best.value; // coef
-        sys_clean(info);
-    }
 }
 
 int main(int argc, char *argv[]) {
