@@ -40,8 +40,9 @@
 #endif
 
 typedef enum {
-    PSO_DIC,
-} sys_task_type;
+    cost_func_zncc,
+    cost_func_ssd
+} pso_cost_type;
 
 typedef struct sys_args_info {
 	int **args_ptr;
@@ -57,6 +58,8 @@ typedef struct sys_info {
 	dic_context dic_ctx; // !!! must remove outside
 } sys_info;
 
+void run_pso(struct sys_info *info, pso_cost_type type);
+void pso_create_factory(struct sys_info *info, pso_cost_type type);
 void init_random_seed();
 double random_digit(void);
 double get_mean(double sum, int side_len);

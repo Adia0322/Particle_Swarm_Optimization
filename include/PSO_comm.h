@@ -39,11 +39,6 @@ typedef enum {
 	POSITION,
 } pso_bound_check_type;
 
-typedef enum {
-    cost_func_zncc,
-    cost_func_ssd
-} pso_cost_type;
-
 struct pso_global_best {
     double position[2]; // x, y
     double value;
@@ -103,8 +98,6 @@ struct pso_cost_func_ops {
     int (*cleanup)(pso_context *ctx);
 };
 
-void run_pso(struct sys_info *info, pso_cost_type type);
-void pso_create_factory(struct sys_info *info, pso_cost_type type);
 int pso_destroy(struct pso_context *pso_ctx);
 int execute_pso_algorithm(struct pso_context *ctx);
 int st_pso_algo_init(struct pso_context *ctx);
