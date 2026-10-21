@@ -7,7 +7,8 @@ CC = gcc
 ROOT_DIR := $(CURDIR)
 CFLAGS = -Wall -O2 -fPIC \
 	-I$(ROOT_DIR)/include \
-	-I$(ROOT_DIR)/example/dic/include
+	-I$(ROOT_DIR)/example/dic/include \
+	-I$(ROOT_DIR)/system/include
 
 LDFLAGS 			 = 		-lm -shared -Wl,--export-all-symbols      # link params
 BUILD_DIR            =      build
@@ -19,7 +20,6 @@ OUTPUT_PSO           =      PSO.dll
 # note: SRCS_PSO & HEADERS_PSO aim to add dependency, NOT indicate header path!
 SRCS_PSO             =      $(wildcard core/*.c) \
 							$(wildcard example/dic/cost_function/*.c) \
-                            $(wildcard factory/*.c) \
                             $(wildcard system/*.c) \
 							$(wildcard tool/*.c) \
 							$(wildcard tool/math/*.c) \
