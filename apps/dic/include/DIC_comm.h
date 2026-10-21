@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "PSO_comm.h"
+#include "pso_comm.h"
 #include "image_comm.h"
 
 typedef struct dic_config {

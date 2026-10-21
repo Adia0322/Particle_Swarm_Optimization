@@ -3,8 +3,8 @@
 #include <math.h>
 #include <errno.h>
 #include "system_comm.h"
-#include "DIC_comm.h"
-#include "PSO_comm.h"
+#include "dic_comm.h"
+#include "pso_comm.h"
 
 // SSD Critiria
 struct pso_cost_func_ops ssd_ops = {

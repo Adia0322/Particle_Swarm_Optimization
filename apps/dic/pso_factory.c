@@ -1,5 +1,5 @@
 #include "system_comm.h"
-#include "PSO_comm.h"
+#include "pso_comm.h"
 
 void pso_create_factory(struct sys_info *info,  pso_cost_type type) {
     // SELECT PSO COST FUNC TYPE

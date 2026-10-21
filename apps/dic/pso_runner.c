@@ -1,5 +1,5 @@
 #include "system_comm.h"
-#include "PSO_comm.h"
+#include "pso_comm.h"
 
 void run_pso(struct sys_info *info, pso_cost_type type) {
 	// create pso_context and put DIC info in it

@@ -1,8 +1,7 @@
 #include "system_comm.h"
-#include "PSO_comm.h"
+#include "pso_comm.h"
 #include <float.h>
 #include <stdint.h>
-#include "DIC_comm.h"
 
 static inline double rand0_1(void) {
     return (double)rand() * (1.0 / (double)RAND_MAX);

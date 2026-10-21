@@ -9,7 +9,6 @@ typedef struct img_info{
     double *cur_data;
     uint32_t width;
     uint32_t height;
-    uint32_t pixel_format;
 } img_info;
 
 #endif

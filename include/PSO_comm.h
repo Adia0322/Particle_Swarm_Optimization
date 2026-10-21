@@ -79,11 +79,11 @@ struct pso_particle {
 
 typedef struct pso_context {
     struct pso_config config;
-    struct pso_algorithm_ops *algo_ops;     // 與priv不同 填入特定的ops: 表示:怎麼做 (指標指向靜態Struct)
+    struct pso_algorithm_ops *algo_ops;
     struct pso_cost_func_ops *cost_ops;
     struct pso_particle *particle;
     struct pso_global_best global_best; 
-    void *priv;                             // private 為特定任務中所需的"資料" 表示:用什麼做
+    void *priv;                             // private data
 }pso_context;
 
 struct pso_algorithm_ops {

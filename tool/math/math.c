@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "image_comm.h"
-#include "DIC_comm.h"
+#include "dic_comm.h"
 
 double random_digit(void)
 {
@@ -24,27 +24,3 @@ double get_mean(double sum, int side_len) {
 int make_odd(int value) {
     return (value % 2 == 0) ? value + 1 : value;
 }
-
-/*
-傳入陣列到函式其他寫法:
-void func(int (*arr)[4])
-
-don't add static to function (不同檔案間傳遞無法使用)
-
-2. 如果想跨檔案使用 inline
-必須寫在 .h 檔：你必須把整個函式的「內容」都寫在標頭檔裡，並加上 static inline。
-
-*/
-
-// void print_array(int *array){
-//     if (array==NULL) return;
-// 	for (int i = 0; i < Size; i++)
-// 	{	
-// 		for (int j = 0; j < Size; j++)
-// 		{
-// 			printf("%d ",array[i][j]);
-// 		}
-// 		printf("\n");
-// 	}
-// 	return;
-// }

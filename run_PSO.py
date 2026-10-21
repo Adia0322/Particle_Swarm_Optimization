@@ -4,7 +4,7 @@ import cv2
 import os
 
 class DICProcessor:
-    def __init__(self, dll_path='./build/PSO.dll'):
+    def __init__(self, dll_path='./build/pso.dll'):
         if not os.path.exists(dll_path):
             raise FileNotFoundError(f"DLL not found at {dll_path}")
         
@@ -64,7 +64,7 @@ class DICProcessor:
         }
     
 if __name__ == "__main__":
-    proc = DICProcessor(dll_path='./build/PSO.dll')
+    proc = DICProcessor(dll_path='./build/pso.dll')
 
     img1                    = cv2.imread('image/img1.jpg', 0)
     img2                    = cv2.imread('image/img1_shefted_5_5.jpg', 0)
