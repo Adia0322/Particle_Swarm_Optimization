@@ -93,9 +93,9 @@ struct pso_algorithm_ops {
 };
 
 struct pso_cost_func_ops {
-    int (*init)(sys_info *info);
-    double (*cost_function)(pso_context *ctx, const double *position);
-    int (*cleanup)(pso_context *ctx);
+    int (*init)(void *priv);
+    double (*cost_function)(void *priv, const double *position); // need to remove position?
+    int (*cleanup)(void *priv);
 };
 
 int pso_destroy(struct pso_context *pso_ctx);

@@ -14,32 +14,29 @@ static inline void clamp_to_bounds(double *value, double max, double min) {
 }
 
 int execute_pso_algorithm(struct pso_context *ctx) {
-	// 1. check
-	if (!ctx || !ctx->algo_ops || !ctx->algo_ops->run) {
+	if (!ctx || !ctx->algo_ops || !ctx->algo_ops->run || !ctx->algo_ops->init || !ctx->algo_ops->cleanup) {
 		return PSO_FAILURE;
 	}
-	// 2. initial (optional)
-	if (ctx->algo_ops->init) {
-		if (ctx->algo_ops->init(ctx) != 0) {
-			SYS_DBG("algo init failed!\n");
-			return PSO_FAILURE;
-		}
+	int ret = PSO_FAILURE;
+
+	if (ctx->algo_ops->init(ctx) != PSO_SUCCESS) { // st_pso_algo_init
+		SYS_DBG("algo init failed!\n");
+		goto cleanup;
 	}
-	// 3. run (necessary)
-	int run_ret = ctx->algo_ops->run(ctx);
-	if (run_ret != 0) {
+
+	if (ctx->algo_ops->run(ctx) != PSO_SUCCESS) { // st_pso_algo_run
 		SYS_DBG("algo run failed!\n");
-		return PSO_FAILURE;
+		goto cleanup;
 	}
-	// 4. clean (optional)
-	if (ctx->algo_ops->cleanup) {
-		int clean_ret = ctx->algo_ops->cleanup(ctx);
-		if (clean_ret != 0) {
-			SYS_DBG("algo cleanup failed!\n");
-			return PSO_FAILURE;
-		}
+	ret = PSO_SUCCESS;
+
+cleanup:
+	if (ctx->algo_ops->cleanup(ctx) != PSO_SUCCESS) {
+		SYS_DBG("algo cleanup failed!\n");
+		ret = PSO_FAILURE;
 	}
-	return PSO_SUCCESS;
+
+	return ret;
 }
 
 void st_pso_config_init(struct pso_context *ctx) {
@@ -119,7 +116,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].velocity[dim] = ctx->config.v_ini*(rand0_1());
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
+			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
 			SYS_DBG("cost = %.4f\n", cost);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
@@ -137,7 +134,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].position[dim] = border_side_len_half * (rand0_1());
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
+			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
 				ctx->global_best.value = cost;
@@ -161,7 +158,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].position[dim] += particles[p_idx].velocity[dim];
 				clamp_to_bounds(&particles[p_idx].position[dim], border_side_len_half, -border_side_len_half);
 			}
-			double cost = ctx->cost_ops->cost_function(ctx, particles[p_idx].position);
+			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
 			if (cost > particles[p_idx].ind_best_value) {
 				particles[p_idx].ind_best_value = cost;
 				for (int dim = 0; dim<ctx->config.dimension; dim++) {

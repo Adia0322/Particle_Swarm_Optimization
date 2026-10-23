@@ -51,15 +51,12 @@ typedef struct sys_args_info {
 } sys_args_info;
 
 typedef struct sys_info {
-	int dev_num;
-	int dev_idx;
-	sys_args_info args_info;
 	pso_context pso_ctx;
-	dic_context dic_ctx; // !!! must remove outside
+	dic_context dic_ctx;
 } sys_info;
 
-void run_pso(struct sys_info *info, pso_cost_type type);
-void pso_create_factory(struct sys_info *info, pso_cost_type type);
+void run_pso(struct pso_context *pso_ctx, pso_cost_type type);
+int pso_create_factory(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
 void init_random_seed();
 double random_digit(void);
 double get_mean(double sum, int side_len);
