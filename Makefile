@@ -7,7 +7,8 @@ CC = gcc
 ROOT_DIR := $(CURDIR)
 CFLAGS = -Wall -O2 -fPIC \
 	-I$(ROOT_DIR)/include \
-	-I$(ROOT_DIR)/apps/dic/include
+	-I$(ROOT_DIR)/apps/dic/include \
+	-I$(ROOT_DIR)/tool/math/include
 
 LDFLAGS 			 = 		-lm -shared -Wl,--export-all-symbols      # link params
 BUILD_DIR            =      build
@@ -25,7 +26,8 @@ SRCS_PSO             =      $(wildcard core/*.c) \
 							$(wildcard tool/interp/*.c)
 
 HEADERS_PSO          =      $(wildcard include/*.h) \
-							$(wildcard apps/dic/include/*.h)
+							$(wildcard apps/dic/include/*.h) \
+							$(wildcard tool/math/include/*.h)
 
 ################################
 ###         Target           ###

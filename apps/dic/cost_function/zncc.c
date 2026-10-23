@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <pso_math.h>
 #include <errno.h>
 #include "system_comm.h"
 #include "dic_comm.h"

@@ -65,6 +65,5 @@ double random_digit(void);
 double get_mean(double sum, int side_len);
 struct sys_info *sys_create();
 int sys_clean(sys_info *info);
-int make_odd(int value);
 
 #endif

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
+#include "pso_math.h"
 #include "image_comm.h"
 #include "dic_comm.h"
 
