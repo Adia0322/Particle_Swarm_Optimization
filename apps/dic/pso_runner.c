@@ -2,6 +2,57 @@
 #include "pso_comm.h"
 #include "pso_math.h"
 
+int dic_cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type) {
+    // SELECT PSO COST FUNC TYPE
+    if (!pso_ctx || !input || pso_ctx->priv) return PSO_FAILURE;
+    switch(type) {
+        case cost_func_zncc:
+            pso_ctx->priv                  = zncc_create(input);
+            pso_ctx->cost_ops              = &zncc_ops;
+            break;
+            
+        case cost_func_ssd:
+            pso_ctx->priv                  = ssd_create(input);
+            pso_ctx->cost_ops              = &ssd_ops;
+            break;
+
+        default:
+            SYS_DBG("[ERROR] Not supported type!\n");
+            return PSO_FAILURE;
+    }
+
+    if (!pso_ctx->priv) {
+        SYS_DBG("[ERROR] pso_ctx->priv malloc failed!\n");
+        dic_cost_cleanup(pso_ctx); // ingore ret
+        return PSO_FAILURE;
+    }
+    if (pso_ctx->cost_ops->init(pso_ctx->priv) != PSO_SUCCESS) { // zncc_init
+        SYS_DBG("[ERROR] PSO cost_func init failed!\n");
+        dic_cost_cleanup(pso_ctx);
+        return PSO_FAILURE;
+    }
+    return PSO_SUCCESS;
+}
+
+int dic_cost_cleanup(struct pso_context *pso_ctx) {
+    if (!pso_ctx) return PSO_FAILURE;
+
+    if (pso_ctx->priv) {
+        if (!pso_ctx->cost_ops || !pso_ctx->cost_ops->cleanup) return PSO_FAILURE;
+
+        int ret = pso_ctx->cost_ops->cleanup(pso_ctx->priv);
+        if (ret != PSO_SUCCESS) {
+            SYS_DBG("[ERROR] cleanup(pso_ctx->priv) failed!\n");
+            return PSO_FAILURE;
+        }
+
+        pso_ctx->priv = NULL;
+    }
+
+    pso_ctx->cost_ops = NULL;
+    return PSO_SUCCESS;
+}
+
 __declspec(dllexport)
 void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
                      int population, int subset_side_len,\
@@ -25,15 +76,15 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
     
     pso_ctx.algo_ops                        = &standard_pso_algo_ops;
 
-    if (pso_create_factory(&pso_ctx, &input, cost_func_zncc) != 0) {
-        SYS_DBG("[ERROR] pso_create_factory failed!\n");
+    if (dic_cost_setup(&pso_ctx, &input, cost_func_zncc) != 0) {
+        SYS_DBG("[ERROR] dic_cost_setup failed!\n");
         return;
     }
     if (!pso_ctx.priv) return;
 
     if (execute_pso_algorithm(&pso_ctx) != 0) {
         SYS_DBG("[ERROR] execute_pso_algorithm failed!\n");
-        pso_destroy(&pso_ctx);
+        dic_cost_cleanup(&pso_ctx);
         return;
     }
 
@@ -42,8 +93,8 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
     result[1] = pso_ctx.global_best.position[1]; // x
     result[2] = pso_ctx.global_best.value; // coef
 
-    if (pso_destroy(&pso_ctx) != 0) {
-        SYS_DBG("[ERROR] pso_destroy failed!\n");
+    if (dic_cost_cleanup(&pso_ctx) != 0) {
+        SYS_DBG("[ERROR] dic_cost_cleanup failed!\n");
         return;
     }
 }

@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "dic_comm.h"
 #include "pso_comm.h"
-#include "image_comm.h"
 
 #define SYS_FAILURE              				-1
 #define SYS_SUCCESS               				0
@@ -44,19 +43,7 @@ typedef enum {
     cost_func_ssd
 } pso_cost_type;
 
-typedef struct sys_args_info {
-	int **args_ptr;
-	int args_num;
-	int args_idx;
-} sys_args_info;
-
-typedef struct sys_info {
-	pso_context pso_ctx;
-	dic_context dic_ctx;
-} sys_info;
-
-void run_pso(struct pso_context *pso_ctx, pso_cost_type type);
-int pso_create_factory(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
+int dic_cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
 void init_random_seed();
 double random_digit(void);
 double get_mean(double sum, int side_len);

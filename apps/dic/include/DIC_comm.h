@@ -4,12 +4,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "pso_comm.h"
-#include "image_comm.h"
 
 typedef struct dic_config {
     uint16_t subset_side_len;
     uint16_t scan_side_len;
 } dic_config;
+
+typedef struct img_info{
+    double *ref_data;
+    double *cur_data;
+    uint32_t width;
+    uint32_t height;
+} img_info;
 
 typedef struct dic_input_data {
 	double *ref_img;

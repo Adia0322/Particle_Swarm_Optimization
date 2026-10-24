@@ -122,10 +122,6 @@ struct dic_zncc_context *zncc_create(struct dic_input_data *input) {
 	return ctx;
 }
 
-void zncc_configure(struct dic_zncc_context *ctx, struct dic_context *dic_ctx) {
-	return;
-}
-
 int zncc_alloc_buffers(struct dic_zncc_context *zncc_ctx) {
 	int subset_memory_size = SQUARE(zncc_ctx->cur_subset_info.side_len) * sizeof(double);
 	zncc_ctx->cur_subset_info.subset_data 	= malloc(subset_memory_size);
@@ -163,8 +159,7 @@ int zncc_init(void *priv) {
 	SYS_DBG("zncc_init\n");
 	if (!priv) return -1;
 	struct dic_zncc_context *ctx = priv;
-	if (ctx == NULL) return -1;
-	// zncc_configure(ctx, &info->dic_ctx);
+
 	if (zncc_alloc_buffers(ctx) != 0) {
 		SYS_DBG("Allocating memory failed!!\n");
 		return -1;
@@ -242,26 +237,13 @@ int zncc_cleanup(void *priv) {
 		SYS_DBG("zncc_cleanup: priv == NULL\n");
 		return -1;
 	}
-	struct dic_zncc_context *zncc_ctx = priv;
-    if (zncc_ctx->cur_subset_info.subset_data) {
-		free(zncc_ctx->cur_subset_info.subset_data);
-		zncc_ctx->cur_subset_info.subset_data = NULL;
-	}
-	if (zncc_ctx->ref_subset_info.subset_data) {
-		free(zncc_ctx->ref_subset_info.subset_data);
-		zncc_ctx->ref_subset_info.subset_data = NULL;
-	}
-	if (zncc_ctx->temp_subset) {
-		free(zncc_ctx->temp_subset);
-		zncc_ctx->temp_subset = NULL;
-	}
-	if (zncc_ctx->ref_subset_zero_mean) {
-		free(zncc_ctx->ref_subset_zero_mean);
-		zncc_ctx->ref_subset_zero_mean = NULL;
-	}
+	struct dic_zncc_context *ctx = priv;
+    free(ctx->cur_subset_info.subset_data);
+    free(ctx->ref_subset_info.subset_data);
+    free(ctx->temp_subset);
+    free(ctx->ref_subset_zero_mean);
+    free(ctx);
 
-    free(zncc_ctx);
-    priv = NULL;
     SYS_DBG("zncc_cleanup: Resources released\n");
 	return 0;
 }
