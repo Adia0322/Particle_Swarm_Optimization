@@ -98,7 +98,7 @@ struct pso_cost_func_ops {
     int (*cleanup)(void *priv);
 };
 
-int dic_cost_cleanup(struct pso_context *pso_ctx);
+int cost_cleanup(struct pso_context *pso_ctx);
 int execute_pso_algorithm(struct pso_context *ctx);
 int st_pso_algo_init(struct pso_context *ctx);
 int st_pso_algo_run(struct pso_context *ctx);

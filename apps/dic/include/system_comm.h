@@ -12,9 +12,6 @@
 // #define SYS_DBG_EN                				1
 #define SYS_ERR_EN				  				1
 
-#define SQUARE(x) ((x)*(x))
-#define MEAN(x,y) ((x)/((y)*(y)))
-
 #define IMG_WIDTH_640                           640
 #define IMG_HEIGHT_480                          480 
 #define IMG_WIDTH_1280                          1280
@@ -43,9 +40,6 @@ typedef enum {
     cost_func_ssd
 } pso_cost_type;
 
-int dic_cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
-void init_random_seed();
-double random_digit(void);
-double get_mean(double sum, int side_len);
+int cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
 
 #endif

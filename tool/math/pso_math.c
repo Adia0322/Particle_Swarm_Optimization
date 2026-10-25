@@ -17,10 +17,6 @@ void init_random_seed() {
     }
 }
 
-double get_mean(double sum, int side_len) {
-    return sum/(double)((side_len)*(side_len)); // return type: double
-}
-
 int make_odd(int value) {
     return (value % 2 == 0) ? value + 1 : value;
 }

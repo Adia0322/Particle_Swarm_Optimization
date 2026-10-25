@@ -1,5 +1,6 @@
 #include "system_comm.h"
 #include "pso_comm.h"
+#include "pso_math.h"
 #include <float.h>
 #include <stdint.h>
 
