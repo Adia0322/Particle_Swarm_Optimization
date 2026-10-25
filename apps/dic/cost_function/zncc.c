@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pso_math.h>
-#include "system_comm.h"
 #include "dic_comm.h"
 #include "pso_comm.h"
 #include "interp.h"
+#include "optim_problem.h"
 
 double inline get_subset_mean(const dic_subset_info *subset) {
 	if (!subset) return NAN;
@@ -97,7 +97,7 @@ struct dic_zncc_context *zncc_create(struct dic_input_data *input) {
 	if (!input) return NULL;
 	struct dic_zncc_context *ctx = malloc(sizeof(struct dic_zncc_context));
 	if (!ctx) {
-		SYS_DBG("Malloc dic_zncc_context failed!!\n");
+		DBG_MSG("Malloc dic_zncc_context failed!!\n");
 		return NULL;
 	}
 	ctx->img_info.ref_data 					= input->ref_img;
@@ -133,7 +133,7 @@ int zncc_alloc_buffers(struct dic_zncc_context *zncc_ctx) {
 	return 0;
 
 error_free_buffers:
-	SYS_DBG("Malloc subset_data failed!!\n");
+	DBG_MSG("Malloc subset_data failed!!\n");
 	free(zncc_ctx->cur_subset_info.subset_data);
 	free(zncc_ctx->ref_subset_info.subset_data);
 	free(zncc_ctx->temp_subset);
@@ -152,12 +152,12 @@ struct pso_cost_func_ops zncc_ops = {
 };
 
 int zncc_init(void *priv) {
-	SYS_DBG("zncc_init\n");
+	DBG_MSG("zncc_init\n");
 	if (!priv) return -1;
 	struct dic_zncc_context *ctx = priv;
 
 	if (zncc_alloc_buffers(ctx) != 0) {
-		SYS_DBG("Allocating memory failed!!\n");
+		DBG_MSG("Allocating memory failed!!\n");
 		return -1;
 	}
 	zncc_get_ref_subset_data(ctx);
@@ -166,7 +166,7 @@ int zncc_init(void *priv) {
 }
 
 double zncc_cost_function(void *priv, const double *position) {
-	// SYS_DBG("zncc_cost_function\n");
+	// DBG_MSG("zncc_cost_function\n");
 	if (priv == NULL || position == NULL) return NAN;
 	struct dic_zncc_context *zncc_ctx	= priv;
 	double rel_pso_pt_y 				= position[0]; 	// Pi_x, Pi_y relative corrected coordinate
@@ -185,17 +185,17 @@ double zncc_cost_function(void *priv, const double *position) {
 	int margin							= zncc_ctx->margin;
 
 	if ((img_pso_pt_y_shift + subset_side_len + margin) > img_height || (img_pso_pt_y_shift + margin) < 0) {
-		SYS_DBG("shifted PSO particle image pos_y out of bound!\n");
-		SYS_DBG("img_pso_pt_y_shift: %.2f\n", img_pso_pt_y_shift);
+		DBG_MSG("shifted PSO particle image pos_y out of bound!\n");
+		DBG_MSG("img_pso_pt_y_shift: %.2f\n", img_pso_pt_y_shift);
 		return NAN; // result range: -1 ~ +1
 	} else if ((img_pso_pt_x_shift + subset_side_len + margin) > img_width || (img_pso_pt_x_shift + margin) < 0) {
-		SYS_DBG("shifted PSO particle image pos_x out of bound!\n");
-		SYS_DBG("img_pso_pt_x_shift: %.2f\n", img_pso_pt_x_shift);
+		DBG_MSG("shifted PSO particle image pos_x out of bound!\n");
+		DBG_MSG("img_pso_pt_x_shift: %.2f\n", img_pso_pt_x_shift);
 		return NAN; // result range: -1 ~ +1
 	}
 	
 	if (!ref_subset_data) {
-		SYS_DBG("Error: ref_subset_data is NULL!\n");
+		DBG_MSG("Error: ref_subset_data is NULL!\n");
 		return NAN;
 	}
 
@@ -228,9 +228,9 @@ double zncc_cost_function(void *priv, const double *position) {
 }
 
 int zncc_cleanup(void *priv) {
-	SYS_DBG("zncc_cleanup\n");
+	DBG_MSG("zncc_cleanup\n");
 	if (priv == NULL) {
-		SYS_DBG("zncc_cleanup: priv == NULL\n");
+		DBG_MSG("zncc_cleanup: priv == NULL\n");
 		return -1;
 	}
 	struct dic_zncc_context *ctx = priv;
@@ -240,7 +240,7 @@ int zncc_cleanup(void *priv) {
     free(ctx->ref_subset_zero_mean);
     free(ctx);
 
-    SYS_DBG("zncc_cleanup: Resources released\n");
+    DBG_MSG("zncc_cleanup: Resources released\n");
 	return 0;
 }
 

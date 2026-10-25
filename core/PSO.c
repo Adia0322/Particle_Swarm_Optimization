@@ -1,8 +1,8 @@
-#include "system_comm.h"
 #include "pso_comm.h"
 #include "pso_math.h"
 #include <float.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 static inline double rand0_1(void) {
     return (double)rand() * (1.0 / (double)RAND_MAX);
@@ -21,19 +21,19 @@ int execute_pso_algorithm(struct pso_context *ctx) {
 	int ret = PSO_FAILURE;
 
 	if (ctx->algo_ops->init(ctx) != PSO_SUCCESS) { // st_pso_algo_init
-		SYS_DBG("algo init failed!\n");
+		DBG_MSG("algo init failed!\n");
 		goto cleanup;
 	}
 
 	if (ctx->algo_ops->run(ctx) != PSO_SUCCESS) { // st_pso_algo_run
-		SYS_DBG("algo run failed!\n");
+		DBG_MSG("algo run failed!\n");
 		goto cleanup;
 	}
 	ret = PSO_SUCCESS;
 
 cleanup:
 	if (ctx->algo_ops->cleanup(ctx) != PSO_SUCCESS) {
-		SYS_DBG("algo cleanup failed!\n");
+		DBG_MSG("algo cleanup failed!\n");
 		ret = PSO_FAILURE;
 	}
 
@@ -68,7 +68,7 @@ void st_pso_layout_init(struct pso_context *ctx) {
 int st_pso_memory_alloc(struct pso_context *ctx) {
 	ctx->particle = malloc(sizeof(struct pso_particle)*ctx->config.population);
 	if (!ctx->particle) { 
-		SYS_DBG("malloc particle failed!!\n");
+		DBG_MSG("malloc particle failed!!\n");
 		return -1;
 	}
 	return 0;
@@ -81,23 +81,23 @@ struct pso_algorithm_ops standard_pso_algo_ops = {
 };
 
 int st_pso_algo_init(struct pso_context *ctx) {
-	SYS_DBG("st_pso_algo_init\n");
+	DBG_MSG("st_pso_algo_init\n");
     if (ctx == NULL) return -1;
 	st_pso_config_init(ctx);
 	st_pso_layout_init(ctx);
 	if (st_pso_memory_alloc(ctx) != 0) {
-		SYS_DBG("Allocating memory failed!!\n");
+		DBG_MSG("Allocating memory failed!!\n");
 		return -1;
 	}
 	if (ctx->config.population < ctx->config.layout.fixed_particles) {
-		SYS_DBG("population < fixed_particles!\n");
+		DBG_MSG("population < fixed_particles!\n");
 		return -1;
 	}
 	return 0;
 }
 
 int st_pso_algo_run(struct pso_context *ctx) {
-	SYS_DBG("st_pso_algo_run\n");
+	DBG_MSG("st_pso_algo_run\n");
 	if (ctx == NULL) return -1;
 	double c1 								= ctx->config.c1;
 	double c2 								= ctx->config.c2;
@@ -118,7 +118,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
 			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
-			SYS_DBG("cost = %.4f\n", cost);
+			DBG_MSG("cost = %.4f\n", cost);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
 				ctx->global_best.value = cost;
@@ -176,18 +176,18 @@ int st_pso_algo_run(struct pso_context *ctx) {
 		}
 	}
 	// Result is in ctx->global_best
-	SYS_DBG("[INFO] PSO finished!\n");
-	return SYS_SUCCESS;
+	DBG_MSG("[INFO] PSO finished!\n");
+	return PSO_SUCCESS;
 }
 
 int st_pso_algo_cleanup(struct pso_context *ctx) {
-	SYS_DBG("st_pso_algo_cleanup\n");
+	DBG_MSG("st_pso_algo_cleanup\n");
 	if (ctx == NULL) return -1;
 	if (ctx->particle) {
 		free(ctx->particle);
 		ctx->particle = NULL;
 	}
-	return SYS_SUCCESS;
+	return PSO_SUCCESS;
 }
 
 int main(int argc, char *argv[]) {

@@ -25,6 +25,33 @@
 
 #define PSO_SIDE_LEN_PT             5
 
+#define PSO_FAILURE              				-1
+#define PSO_SUCCESS               				0
+// #define SYS_DBG_EN                				1
+#define ERR_MSG_EN				  				1
+
+#define IMG_WIDTH_640                           640
+#define IMG_HEIGHT_480                          480 
+#define IMG_WIDTH_1280                          1280
+#define IMG_HEIGHT_720                          720 
+#define IMG_WIDTH_1920                          1920
+#define IMG_HEIGHT_1080                         1080 
+
+#if defined(SYS_DBG_EN)
+#define DBG_MSG               MSG_PRT
+#else
+#define DBG_MSG(format, args...)	do {} while (0) // erase: DBG_MSG(<all things you input>)
+#endif
+
+#define MSG_PRT(format, ...)	printf("[%s][%d]"format, __func__, __LINE__, ##__VA_ARGS__)
+// args... similar to ...
+
+#if defined(ERR_MSG_EN)
+#define ERR_MSG					MSG_PRT
+#else
+#define ERR_MSG(format, ...)	do {} while (0)
+#endif
+
 typedef struct pso_context pso_context;
 typedef struct sys_info sys_info;
 typedef struct pso_context pso_context;
@@ -98,7 +125,6 @@ struct pso_cost_func_ops {
     int (*cleanup)(void *priv);
 };
 
-int cost_cleanup(struct pso_context *pso_ctx);
 int execute_pso_algorithm(struct pso_context *ctx);
 int st_pso_algo_init(struct pso_context *ctx);
 int st_pso_algo_run(struct pso_context *ctx);

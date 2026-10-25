@@ -1,7 +1,6 @@
 #ifndef OPTIM_PROBLEM_H
 #define OPTIM_PROBLEM_H
 
-#include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -28,5 +27,5 @@ typedef struct {
 } optim_problem;
 
 int cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type);
-
+int cost_cleanup(struct pso_context *pso_ctx);
 #endif

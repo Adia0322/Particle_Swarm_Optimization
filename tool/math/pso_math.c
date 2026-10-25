@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "pso_math.h"
-#include "dic_comm.h"
 
 double random_digit(void)
 {

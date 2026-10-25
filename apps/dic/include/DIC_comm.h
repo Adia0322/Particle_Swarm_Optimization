@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include "pso_comm.h"
 
+typedef enum {
+    cost_func_zncc,
+    cost_func_ssd
+} pso_cost_type;
+
 typedef struct dic_config {
     uint16_t subset_side_len;
     uint16_t scan_side_len;

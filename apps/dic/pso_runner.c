@@ -1,4 +1,4 @@
-#include "system_comm.h"
+#include "optim_problem.h"
 #include "pso_comm.h"
 #include "pso_math.h"
 
@@ -17,17 +17,17 @@ int cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_co
             break;
 
         default:
-            SYS_DBG("[ERROR] Not supported type!\n");
+            DBG_MSG("[ERROR] Not supported type!\n");
             return PSO_FAILURE;
     }
 
     if (!pso_ctx->priv) {
-        SYS_DBG("[ERROR] pso_ctx->priv malloc failed!\n");
+        DBG_MSG("[ERROR] pso_ctx->priv malloc failed!\n");
         cost_cleanup(pso_ctx); // ingore ret
         return PSO_FAILURE;
     }
     if (pso_ctx->cost_ops->init(pso_ctx->priv) != PSO_SUCCESS) { // zncc_init
-        SYS_DBG("[ERROR] PSO cost_func init failed!\n");
+        DBG_MSG("[ERROR] PSO cost_func init failed!\n");
         cost_cleanup(pso_ctx);
         return PSO_FAILURE;
     }
@@ -42,7 +42,7 @@ int cost_cleanup(struct pso_context *pso_ctx) {
 
         int ret = pso_ctx->cost_ops->cleanup(pso_ctx->priv);
         if (ret != PSO_SUCCESS) {
-            SYS_DBG("[ERROR] cleanup(pso_ctx->priv) failed!\n");
+            DBG_MSG("[ERROR] cleanup(pso_ctx->priv) failed!\n");
             return PSO_FAILURE;
         }
 
@@ -77,24 +77,24 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
     pso_ctx.algo_ops                        = &standard_pso_algo_ops;
 
     if (cost_setup(&pso_ctx, &input, cost_func_zncc) != 0) {
-        SYS_DBG("[ERROR] cost_setup failed!\n");
+        DBG_MSG("[ERROR] cost_setup failed!\n");
         return;
     }
     if (!pso_ctx.priv) return;
 
     if (execute_pso_algorithm(&pso_ctx) != 0) {
-        SYS_DBG("[ERROR] execute_pso_algorithm failed!\n");
+        DBG_MSG("[ERROR] execute_pso_algorithm failed!\n");
         cost_cleanup(&pso_ctx);
         return;
     }
 
-    SYS_DBG("global_best_pos: (x,y) = (%.2f,%.2f)\n", pso_ctx.global_best.position[1], pso_ctx.global_best.position[0]);
+    DBG_MSG("global_best_pos: (x,y) = (%.2f,%.2f)\n", pso_ctx.global_best.position[1], pso_ctx.global_best.position[0]);
     result[0] = pso_ctx.global_best.position[0]; // y
     result[1] = pso_ctx.global_best.position[1]; // x
     result[2] = pso_ctx.global_best.value; // coef
 
     if (cost_cleanup(&pso_ctx) != 0) {
-        SYS_DBG("[ERROR] cost_cleanup failed!\n");
+        DBG_MSG("[ERROR] cost_cleanup failed!\n");
         return;
     }
 }

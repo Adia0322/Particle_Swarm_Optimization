@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <pso_math.h>
-#include "system_comm.h"
 #include "dic_comm.h"
 #include "pso_comm.h"
 #include "interp.h"
+#include "optim_problem.h"
 
 // SSD Critiria
 struct pso_cost_func_ops ssd_ops = {
