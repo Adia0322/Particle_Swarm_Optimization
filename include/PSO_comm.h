@@ -105,8 +105,6 @@ int st_pso_algo_run(struct pso_context *ctx);
 int st_pso_algo_cleanup(struct pso_context *ctx);
 double double_rand_nor(void);
 
-extern struct pso_cost_func_ops zncc_ops;
-extern struct pso_cost_func_ops ssd_ops;
 extern struct pso_algorithm_ops standard_pso_algo_ops;
 
 #endif

@@ -1,14 +1,10 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <pso_math.h>
-#include <errno.h>
 #include "system_comm.h"
 #include "dic_comm.h"
 #include "pso_comm.h"
-
-int interp_safe_margin();
-extern double bilinear(double *data, int width, int height, double x, double y);
+#include "interp.h"
 
 // SSD Critiria
 struct pso_cost_func_ops ssd_ops = {

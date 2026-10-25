@@ -47,7 +47,5 @@ int dic_cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, ps
 void init_random_seed();
 double random_digit(void);
 double get_mean(double sum, int side_len);
-struct sys_info *sys_create();
-int sys_clean(sys_info *info);
 
 #endif

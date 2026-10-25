@@ -1,14 +1,10 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <pso_math.h>
-#include <errno.h>
 #include "system_comm.h"
 #include "dic_comm.h"
 #include "pso_comm.h"
-
-extern int interp_safe_margin();
-extern double bilinear(double *data, int width, int height, double x, double y);
+#include "interp.h"
 
 double inline get_subset_mean(const dic_subset_info *subset) {
 	if (!subset) return NAN;
