@@ -5,10 +5,12 @@
 #include <stdlib.h>
 #include "pso_comm.h"
 
+#define DIC_DIMENSION 2
+
 typedef enum {
     cost_func_zncc,
     cost_func_ssd
-} pso_cost_type;
+} dic_cost_type;
 
 typedef struct dic_config {
     uint16_t subset_side_len;
@@ -61,9 +63,9 @@ typedef struct dic_zncc_context {
     struct img_info img_info;
     double *temp_subset;
     double *ref_subset_zero_mean;
-    double subset_pt_cur_pos[2];
-    double img_pt_ref_pos[2];
-    double img_pt_cur_pos[2];
+    double subset_pt_cur_pos[DIC_DIMENSION];
+    double img_pt_ref_pos[DIC_DIMENSION];
+    double img_pt_cur_pos[DIC_DIMENSION];
     int subset_side_len;
     int margin;
 } dic_zncc_context;
@@ -74,9 +76,9 @@ typedef struct dic_ssd_context {
     struct img_info img_info;
     double *temp_subset;
     double *ref_subset_zero_mean;
-    double subset_pt_cur_pos[2];
-    double img_pt_ref_pos[2];
-    double img_pt_cur_pos[2];
+    double subset_pt_cur_pos[DIC_DIMENSION];
+    double img_pt_ref_pos[DIC_DIMENSION];
+    double img_pt_cur_pos[DIC_DIMENSION];
     int margin;
 } dis_ssd_context;
 

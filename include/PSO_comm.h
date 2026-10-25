@@ -67,7 +67,7 @@ typedef enum {
 } pso_bound_check_type;
 
 struct pso_global_best {
-    double position[2]; // x, y
+    double position[2]; // y, x
     double value;
     int index;
 };
@@ -109,7 +109,8 @@ typedef struct pso_context {
     struct pso_algorithm_ops *algo_ops;
     struct pso_cost_func_ops *cost_ops;
     struct pso_particle *particle;
-    struct pso_global_best global_best; 
+    struct pso_global_best global_best;
+    // struct optim_problem *problem; 
     void *priv;                             // private data
 }pso_context;
 

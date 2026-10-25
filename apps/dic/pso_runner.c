@@ -2,7 +2,7 @@
 #include "pso_comm.h"
 #include "pso_math.h"
 
-int cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, pso_cost_type type) {
+int cost_setup(struct pso_context *pso_ctx, struct dic_input_data *input, dic_cost_type type) {
     // SELECT PSO COST FUNC TYPE
     if (!pso_ctx || !input || pso_ctx->priv) return PSO_FAILURE;
     switch(type) {
