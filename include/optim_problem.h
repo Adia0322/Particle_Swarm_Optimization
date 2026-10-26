@@ -17,6 +17,7 @@ typedef struct optim_problem {
     const double *lower;
     const double *upper;
     void *data;
+    int (*init)(void *data);
     double (*evaluate)(void *data, const double *position);
     int (*destroy)(void *data);
     optim_direction_t direction;

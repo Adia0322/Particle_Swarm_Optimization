@@ -22,6 +22,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
         .lower              = dim_array_lower,
         .upper              = dim_array_upper,
         .data               = NULL,
+        .init               = NULL,
         .evaluate           = NULL,
         .destroy            = NULL,
         .direction          = OPTIM_MAXIMIZE,
@@ -31,6 +32,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     switch(type) {
         case cost_func_zncc:
             out->data                      = zncc_create(input);
+            out->init                      = zncc_init;
             out->evaluate                  = zncc_cost_function;
             out->destroy                   = zncc_cleanup;
             out->direction                 = OPTIM_MAXIMIZE;
@@ -38,6 +40,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
             
         case cost_func_ssd:
             out->data                      = ssd_create(input);
+            out->init                      = ssd_init;
             out->evaluate                  = ssd_cost_function;
             out->destroy                   = ssd_cleanup;
             out->direction                 = OPTIM_MINIMIZE;
@@ -51,7 +54,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     if (!out->data) {
         goto data_malloc_fail;
     }
-    if (zncc_init(out->data) != DIC_SUCCESS) {
+    if (out->init(out->data) != DIC_SUCCESS) {
         goto init_fail;
     }
     return DIC_SUCCESS;
@@ -66,7 +69,7 @@ init_fail:
     DBG_MSG("[ERROR] PSO cost_func init failed!\n");
     free(dim_array_upper);
     free(dim_array_lower);
-    zncc_cleanup(out->data);
+    out->destroy(out->data);
     return DIC_FAILURE;
 
 clear_array:

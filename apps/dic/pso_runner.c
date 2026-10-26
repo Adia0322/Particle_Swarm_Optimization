@@ -1,8 +1,6 @@
 #include "optim_problem.h"
 #include "dic_problem.h"
 #include "pso_comm.h"
-#include "pso_math.h"
-#include <stdint.h>
 
 __declspec(dllexport)
 void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
@@ -11,7 +9,6 @@ void pso_optimize(double *ref_img, double *cur_img, int width, int height,\
     if (!ref_img || !cur_img || !img_ref_pt || !img_cur_pt || !result) return;
     struct pso_context pso_ctx = {0};
     pso_ctx.config.population               = population;
-    // pso_ctx.config.border_side_len 	        = make_odd(height * DIC_SEARCH_BORDER_SCALE );
 
     struct dic_input_data input = {
         .ref_img                            = ref_img,
