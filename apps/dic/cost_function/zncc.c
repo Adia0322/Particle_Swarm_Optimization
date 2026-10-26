@@ -116,6 +116,8 @@ struct dic_zncc_context *zncc_ctx_create(const struct dic_input_data *input) {
 	ctx->ref_subset_info.total_pixels 	    = SQUARE(ctx->ref_subset_info.side_len);
 	ctx->cur_subset_info.total_pixels 	    = SQUARE(ctx->cur_subset_info.side_len);
 	ctx->margin							    = interp_safe_margin();
+
+	zncc_init(ctx);
 	return ctx;
 }
 

@@ -22,7 +22,6 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
         .lower              = dim_array_lower,
         .upper              = dim_array_upper,
         .data               = NULL,
-        .init               = NULL,
         .evaluate           = NULL,
         .destroy            = NULL,
         .direction          = OPTIM_MAXIMIZE,
@@ -32,7 +31,6 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     switch(type) {
         case cost_func_zncc:
             out->data                      = zncc_ctx_create(input);
-            out->init                      = zncc_init;
             out->evaluate                  = zncc_cost_function;
             out->destroy                   = zncc_cleanup;
             out->direction                 = OPTIM_MAXIMIZE;
@@ -40,7 +38,6 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
             
         case cost_func_ssd:
             out->data                      = ssd_ctx_create(input);
-            out->init                      = ssd_init;
             out->evaluate                  = ssd_cost_function;
             out->destroy                   = ssd_cleanup;
             out->direction                 = OPTIM_MINIMIZE;
@@ -53,10 +50,6 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
 
     if (!out->data) {
         DBG_MSG("[ERROR] out->data malloc failed!\n");
-        goto fail;
-    }
-    if (out->init(out->data) != DIC_SUCCESS) {
-        DBG_MSG("[ERROR] PSO cost_func init failed!\n");
         goto fail;
     }
     return DIC_SUCCESS;
