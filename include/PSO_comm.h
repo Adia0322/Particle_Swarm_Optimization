@@ -21,7 +21,6 @@
 #define PSO_CFG_DEC_FACTOR          1.0f
 #define PSO_CFG_INC_FACTOR          1.0f
 #define PSO_CFG_BORDER_LEN          1
-#define PSO_CFG_BORDER_SCALE        0.05
 
 #define PSO_SIDE_LEN_PT             5
 
@@ -54,7 +53,6 @@
 
 typedef struct pso_context pso_context;
 typedef struct sys_info sys_info;
-typedef struct pso_context pso_context;
 
 typedef enum {
     PSO_MINIMIZE,
@@ -107,11 +105,11 @@ struct pso_particle {
 typedef struct pso_context {
     struct pso_config config;
     struct pso_algorithm_ops *algo_ops;
-    struct pso_cost_func_ops *cost_ops;
+    // struct pso_cost_func_ops *cost_ops;
     struct pso_particle *particle;
     struct pso_global_best global_best;
-    // struct optim_problem *problem; 
-    void *priv;                             // private data
+    struct optim_problem *problem; 
+    // void *priv;                             // private data
 }pso_context;
 
 struct pso_algorithm_ops {

@@ -1,11 +1,13 @@
-#ifndef DIC_COMM_H
-#define DIC_COMM_H
+#ifndef DIC_PROBLEM_H
+#define DIC_PROBLEM_H
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <optim_problem.h>
+#include "dic_comm.h"
 
 int dic_problem_create(
-    const dic_input_data *input,
+    const struct dic_input_data *input,
     dic_cost_type type,
     struct optim_problem *out);
 

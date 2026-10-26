@@ -1,6 +1,8 @@
+#include "optim_problem.h"
 #include "pso_comm.h"
 #include "pso_math.h"
 #include <float.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -60,7 +62,7 @@ void st_pso_layout_init(struct pso_context *ctx) {
 	// init st_pso_config_init() first
 	if (ctx == NULL) return;
     ctx->config.layout.side_len_pt 			= 		PSO_SIDE_LEN_PT;
-    ctx->config.layout.grid_spacing 		= 		(ctx->config.border_side_len - 1) / (ctx->config.layout.side_len_pt - 1);
+    ctx->config.layout.grid_spacing 		= 		(fabs(ctx->problem->upper[0] - ctx->problem->lower[0]))/ (ctx->config.layout.side_len_pt - 1);
     ctx->config.layout.fixed_particles 		= 		ctx->config.layout.side_len_pt * ctx->config.layout.side_len_pt;
 	ctx->config.layout.shift_side_len_half 	= 		((ctx->config.layout.side_len_pt-1)/2) * ctx->config.layout.grid_spacing;
 }
@@ -82,18 +84,22 @@ struct pso_algorithm_ops standard_pso_algo_ops = {
 
 int st_pso_algo_init(struct pso_context *ctx) {
 	DBG_MSG("st_pso_algo_init\n");
-    if (ctx == NULL) return -1;
+    if (ctx == NULL) return PSO_FAILURE;
 	st_pso_config_init(ctx);
 	st_pso_layout_init(ctx);
 	if (st_pso_memory_alloc(ctx) != 0) {
-		DBG_MSG("Allocating memory failed!!\n");
-		return -1;
+		DBG_MSG("[ERROR] Allocating memory failed!!\n");
+		return PSO_FAILURE;
 	}
 	if (ctx->config.population < ctx->config.layout.fixed_particles) {
-		DBG_MSG("population < fixed_particles!\n");
-		return -1;
+		goto init_err;
 	}
-	return 0;
+	return PSO_SUCCESS;
+
+init_err:
+	DBG_MSG("[ERROR] population < fixed_particles!\n");
+	st_pso_algo_cleanup(ctx);
+	return PSO_FAILURE;
 }
 
 int st_pso_algo_run(struct pso_context *ctx) {
@@ -101,7 +107,6 @@ int st_pso_algo_run(struct pso_context *ctx) {
 	if (ctx == NULL) return -1;
 	double c1 								= ctx->config.c1;
 	double c2 								= ctx->config.c2;
-	double border_side_len_half 			= 0.5 * (ctx->config.border_side_len - 1);
 	struct pso_particle *particles 			= ctx->particle;
 	double spacing 							= ctx->config.layout.grid_spacing;
 	double half_len 						= ctx->config.layout.shift_side_len_half;
@@ -117,7 +122,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].velocity[dim] = ctx->config.v_ini*(rand0_1());
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
+			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
 			DBG_MSG("cost = %.4f\n", cost);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
@@ -132,10 +137,12 @@ int st_pso_algo_run(struct pso_context *ctx) {
 		else {
 			for (int dim=0; dim<ctx->config.dimension; dim++) {
 				particles[p_idx].velocity[dim] = ctx->config.v_ini*(rand0_1()); // should initialize in .init
-				particles[p_idx].position[dim] = border_side_len_half * (rand0_1());
+				double low = ctx->problem->lower[dim];
+				double high = ctx->problem->upper[dim];
+				particles[p_idx].position[dim] = low + (high - low) * rand0_1();
 				particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 			}
-			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
+			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
 			particles[p_idx].ind_best_value = cost;
 			if (cost > ctx->global_best.value) {
 				ctx->global_best.value = cost;
@@ -154,12 +161,12 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				particles[p_idx].velocity[dim] = weight * particles[p_idx].velocity[dim] +\
 												 c1 * (rand0_1()) * (particles[p_idx].ind_best_pos[dim] - particles[p_idx].position[dim]) +\
 												 c2 * (rand0_1()) * (ctx->global_best.position[dim] - particles[p_idx].position[dim]);
-				
+
 				clamp_to_bounds(&particles[p_idx].velocity[dim], ctx->config.v_max, ctx->config.v_min);
 				particles[p_idx].position[dim] += particles[p_idx].velocity[dim];
-				clamp_to_bounds(&particles[p_idx].position[dim], border_side_len_half, -border_side_len_half);
+				clamp_to_bounds(&particles[p_idx].position[dim], ctx->problem->upper[dim], ctx->problem->lower[dim]);
 			}
-			double cost = ctx->cost_ops->cost_function(ctx->priv, particles[p_idx].position);
+			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
 			if (cost > particles[p_idx].ind_best_value) {
 				particles[p_idx].ind_best_value = cost;
 				for (int dim = 0; dim<ctx->config.dimension; dim++) {

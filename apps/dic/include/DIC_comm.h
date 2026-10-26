@@ -6,6 +6,9 @@
 #include "pso_comm.h"
 
 #define DIC_DIMENSION 2
+#define DIC_FAILURE                 -1
+#define DIC_SUCCESS                 0
+#define DIC_SEARCH_BORDER_SCALE     0.05
 
 typedef enum {
     cost_func_zncc,
@@ -91,8 +94,8 @@ int zncc_cleanup(void *priv);
 int ssd_init(void *priv);
 double ssd_cost_function(void *priv, const double *position);
 int ssd_cleanup(void *priv);
-struct dic_zncc_context *zncc_create(struct dic_input_data *input);
-struct dic_ssd_context *ssd_create(struct dic_input_data *input);
+struct dic_zncc_context *zncc_create(const struct dic_input_data *input);
+struct dic_ssd_context *ssd_create(const struct dic_input_data *input);
 
 extern struct pso_cost_func_ops zncc_ops;
 extern struct pso_cost_func_ops ssd_ops;

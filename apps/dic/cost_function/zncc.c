@@ -93,7 +93,7 @@ static void zncc_get_ref_subset_data(struct dic_zncc_context *zncc_ctx) {
 	zncc_ctx->ref_subset_info.mean = get_subset_mean(&zncc_ctx->ref_subset_info);
 }
 
-struct dic_zncc_context *zncc_create(struct dic_input_data *input) {
+struct dic_zncc_context *zncc_create(const struct dic_input_data *input) {
 	if (!input) return NULL;
 	struct dic_zncc_context *ctx = malloc(sizeof(struct dic_zncc_context));
 	if (!ctx) {
