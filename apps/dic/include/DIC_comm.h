@@ -94,8 +94,8 @@ int zncc_cleanup(void *priv);
 int ssd_init(void *priv);
 double ssd_cost_function(void *priv, const double *position);
 int ssd_cleanup(void *priv);
-struct dic_zncc_context *zncc_create(const struct dic_input_data *input);
-struct dic_ssd_context *ssd_create(const struct dic_input_data *input);
+struct dic_zncc_context *zncc_ctx_create(const struct dic_input_data *input);
+struct dic_ssd_context *ssd_ctx_create(const struct dic_input_data *input);
 
 extern struct pso_cost_func_ops zncc_ops;
 extern struct pso_cost_func_ops ssd_ops;

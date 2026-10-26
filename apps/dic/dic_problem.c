@@ -31,7 +31,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
 
     switch(type) {
         case cost_func_zncc:
-            out->data                      = zncc_create(input);
+            out->data                      = zncc_ctx_create(input);
             out->init                      = zncc_init;
             out->evaluate                  = zncc_cost_function;
             out->destroy                   = zncc_cleanup;
@@ -39,7 +39,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
             break;
             
         case cost_func_ssd:
-            out->data                      = ssd_create(input);
+            out->data                      = ssd_ctx_create(input);
             out->init                      = ssd_init;
             out->evaluate                  = ssd_cost_function;
             out->destroy                   = ssd_cleanup;
@@ -59,10 +59,18 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     }
     return DIC_SUCCESS;
 
+clear_array:
+    DBG_MSG("[ERROR] clear_array!\n");
+    free(dim_array_upper);
+    free(dim_array_lower);
+    *out = (struct optim_problem){0};
+    return DIC_FAILURE;
+
 data_malloc_fail:
     DBG_MSG("[ERROR] out->data malloc failed!\n");
     free(dim_array_upper);
     free(dim_array_lower);
+    *out = (struct optim_problem){0};
     return DIC_FAILURE;
 
 init_fail:
@@ -70,12 +78,7 @@ init_fail:
     free(dim_array_upper);
     free(dim_array_lower);
     out->destroy(out->data);
-    return DIC_FAILURE;
-
-clear_array:
-    DBG_MSG("[ERROR] clear_array!\n");
-    free(dim_array_upper);
-    free(dim_array_lower);
+    *out = (struct optim_problem){0};
     return DIC_FAILURE;
 }
 

@@ -55,7 +55,7 @@ void st_pso_config_init(struct pso_context *ctx) {
     ctx->config.c2 							=		PSO_CFG_C2;
     ctx->config.dec_factor 					= 		PSO_CFG_DEC_FACTOR;
     ctx->config.inc_factor 					=		PSO_CFG_INC_FACTOR;
-	ctx->global_best.value					=		-FLT_MAX;
+	ctx->global_best.value					=		ctx->problem->direction == OPTIM_MAXIMIZE ? -INFINITY : INFINITY;
 }
 
 void st_pso_layout_init(struct pso_context *ctx) {
@@ -102,6 +102,11 @@ init_err:
 	return PSO_FAILURE;
 }
 
+static inline int is_better(double candidate, double current, optim_direction_t direction) {
+	return (direction == OPTIM_MAXIMIZE && candidate > current) ||
+			(direction == OPTIM_MINIMIZE && candidate < current);
+}
+
 int st_pso_algo_run(struct pso_context *ctx) {
 	DBG_MSG("st_pso_algo_run\n");
 	if (ctx == NULL) return -1;
@@ -111,7 +116,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 	double spacing 							= ctx->config.layout.grid_spacing;
 	double half_len 						= ctx->config.layout.shift_side_len_half;
 	init_random_seed(); // initialize random var (only do once)
-	// init setup (initialize fixed points)
+	// initialize fixed points
 	for (int p_idx = 0; p_idx < ctx->config.population; p_idx++) {
 		if (p_idx < (ctx->config.layout.fixed_particles)) {
 			double x_pos = (double)(p_idx % ctx->config.layout.side_len_pt) * spacing - (double)half_len;
@@ -125,7 +130,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
 			DBG_MSG("cost = %.4f\n", cost);
 			particles[p_idx].ind_best_value = cost;
-			if (cost > ctx->global_best.value) {
+			if (is_better(cost, ctx->global_best.value, ctx->problem->direction)) {
 				ctx->global_best.value = cost;
 				ctx->global_best.index = p_idx;
 				for (int dim=0; dim<ctx->config.dimension; dim++) {
@@ -144,7 +149,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 			}
 			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
 			particles[p_idx].ind_best_value = cost;
-			if (cost > ctx->global_best.value) {
+			if (is_better(cost, ctx->global_best.value, ctx->problem->direction)) {
 				ctx->global_best.value = cost;
 				ctx->global_best.index = p_idx;
 				for (int dim=0; dim<ctx->config.dimension; dim++) {
@@ -153,7 +158,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 			}
 		}
 	}
-	// iteration strat
+	// iteration start
 	for (int iter = 0; iter < ctx->config.max_iter; iter++) {
 		for (int p_idx = 0; p_idx < ctx->config.population; p_idx++) {
 			for (int dim = 0; dim<ctx->config.dimension; dim++) {
@@ -167,12 +172,12 @@ int st_pso_algo_run(struct pso_context *ctx) {
 				clamp_to_bounds(&particles[p_idx].position[dim], ctx->problem->upper[dim], ctx->problem->lower[dim]);
 			}
 			double cost = ctx->problem->evaluate(ctx->problem->data, particles[p_idx].position);
-			if (cost > particles[p_idx].ind_best_value) {
+			if (is_better(cost, particles[p_idx].ind_best_value, ctx->problem->direction)) {
 				particles[p_idx].ind_best_value = cost;
 				for (int dim = 0; dim<ctx->config.dimension; dim++) {
 					particles[p_idx].ind_best_pos[dim] = particles[p_idx].position[dim];
 				}
-				if (cost > ctx->global_best.value) {
+				if (is_better(cost, ctx->global_best.value, ctx->problem->direction)) {
 					ctx->global_best.value = cost;
 					ctx->global_best.index = p_idx;
 					for (int dim = 0; dim<ctx->config.dimension; dim++) {
@@ -182,7 +187,7 @@ int st_pso_algo_run(struct pso_context *ctx) {
 			}
 		}
 	}
-	// Result is in ctx->global_best
+	// Result: ctx->global_best
 	DBG_MSG("[INFO] PSO finished!\n");
 	return PSO_SUCCESS;
 }

@@ -13,7 +13,7 @@ struct pso_cost_func_ops ssd_ops = {
 	.cleanup		= ssd_cleanup
 };
 
-struct dic_ssd_context *ssd_create(const struct dic_input_data *input) {
+struct dic_ssd_context *ssd_ctx_create(const struct dic_input_data *input) {
 	return NULL;
 }
 
