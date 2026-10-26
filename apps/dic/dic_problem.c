@@ -21,25 +21,25 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     *out = (struct optim_problem){
         .lower              = dim_array_lower,
         .upper              = dim_array_upper,
-        .data               = NULL,
         .evaluate           = NULL,
         .destroy            = NULL,
+        .data               = NULL,
         .direction          = OPTIM_MAXIMIZE,
         .dimension          = DIC_DIMENSION
     };
 
     switch(type) {
         case cost_func_zncc:
-            out->data                      = zncc_ctx_create(input);
             out->evaluate                  = zncc_cost_function;
             out->destroy                   = zncc_cleanup;
+            out->data                      = zncc_ctx_create(input);
             out->direction                 = OPTIM_MAXIMIZE;
             break;
             
         case cost_func_ssd:
-            out->data                      = ssd_ctx_create(input);
             out->evaluate                  = ssd_cost_function;
             out->destroy                   = ssd_cleanup;
+            out->data                      = ssd_ctx_create(input);
             out->direction                 = OPTIM_MINIMIZE;
             break;
 
@@ -65,7 +65,7 @@ fail:
 void dic_problem_destroy(struct optim_problem *problem) {
     if (!problem) return;
     if (problem->data && problem->destroy) {
-        problem->destroy(problem->data);
+        problem->destroy(problem->data); // destroy need exist
     }
     free((void *)problem->lower);
     free((void *)problem->upper);
