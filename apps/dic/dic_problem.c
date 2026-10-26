@@ -9,7 +9,7 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
     double *dim_array_upper = malloc(sizeof(double) * DIC_DIMENSION);
     double *dim_array_lower = malloc(sizeof(double) * DIC_DIMENSION);
 
-    if (!dim_array_upper || !dim_array_lower) goto clear_array;
+    if (!dim_array_upper || !dim_array_lower) goto fail;
 
     int border_len = make_odd(input->height * DIC_SEARCH_BORDER_SCALE );
     double half = (border_len - 1)/2.0;
@@ -48,33 +48,20 @@ int dic_problem_create(const struct dic_input_data *input, dic_cost_type type, s
 
         default:
             DBG_MSG("[ERROR] Not supported type!\n");
-            goto clear_array;
+            goto fail;
     }
 
     if (!out->data) {
-        goto data_malloc_fail;
+        DBG_MSG("[ERROR] out->data malloc failed!\n");
+        goto fail;
     }
     if (out->init(out->data) != DIC_SUCCESS) {
-        goto init_fail;
+        DBG_MSG("[ERROR] PSO cost_func init failed!\n");
+        goto fail;
     }
     return DIC_SUCCESS;
 
-clear_array:
-    DBG_MSG("[ERROR] clear_array!\n");
-    free(dim_array_upper);
-    free(dim_array_lower);
-    *out = (struct optim_problem){0};
-    return DIC_FAILURE;
-
-data_malloc_fail:
-    DBG_MSG("[ERROR] out->data malloc failed!\n");
-    free(dim_array_upper);
-    free(dim_array_lower);
-    *out = (struct optim_problem){0};
-    return DIC_FAILURE;
-
-init_fail:
-    DBG_MSG("[ERROR] PSO cost_func init failed!\n");
+fail:
     free(dim_array_upper);
     free(dim_array_lower);
     out->destroy(out->data);
