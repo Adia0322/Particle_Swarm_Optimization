@@ -36,7 +36,7 @@ Target point(x,y) = (426,320)
 * Build
 ```shell
 # shell
-mingw-make all
+mingw32-make all
 ```
 * Run
 ```shell
